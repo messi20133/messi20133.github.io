@@ -64,69 +64,21 @@
       
       
   
-    <h1 class="title"><a href="/2014/05/04/invocationhandler/">invocationhandler</a></h1>
+    <h1 class="title"><a href="/2014/05/04/invocationhandler/">Java动态代理</a></h1>
   
 
     </header>
     <div class="entry">
       
-        <p><strong>InvocationHandler接口</strong></p>
-<pre><code><span class="keyword">public</span> <span class="keyword">interface</span> InvocationHandler{
-<span class="keyword">public</span> Object <span class="title">invoke</span>(Object proxy,Method method,Object[] args)throws Throwable
-</code></pre><p>}<br>参数说明：<br>Object  proxy：被代理的对象<br>Method  method：要调用的方法<br>Object   args[]：方法调用时所需要的参数</p>
-<p><strong>Proxy类</strong><br>Proxy类是专门完成代理的操作类，可以通过此类为一个或多个接口动态地生成实现类，此类提供了如下的操作方法：</p>
-<pre><code><span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title">newProxyInstance</span>(ClassLoader loader,
-        Class&lt;?&gt;[] interfaces,
-        InvocationHandler h)
-        <span class="keyword">throws</span> IllegalArgumentException
-</code></pre><p>下面是个实用动态代理的例子：</p>
-<pre><code>package test.Reflection;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-<span class="class"><span class="keyword">interface</span> <span class="title">Hello</span>{</span>
-<span class="keyword">public</span> <span class="keyword">void</span> sayHello();
-}
-<span class="class"><span class="keyword">class</span> <span class="title">HelloImpl</span> <span class="inheritance"><span class="keyword">implements</span></span> <span class="title">Hello</span>{</span>
-@Override
-<span class="keyword">public</span> <span class="keyword">void</span> sayHello() {
-    <span class="comment">// TODO Auto-generated method stub</span>
-    System.out.println(<span class="string">"say hello"</span>);
-}
-}
-<span class="class"><span class="keyword">class</span> <span class="title">MyInvocationHandler</span> <span class="inheritance"><span class="keyword">implements</span></span> <span class="title">InvocationHandler</span>{</span>
-Object obj;
-<span class="keyword">public</span> Object bind(Object obj){
-    <span class="keyword">this</span>.obj=obj;
-    <span class="keyword">return</span> Proxy.newProxyInstance(obj.getClass().getClassLoader(), obj.getClass().getInterfaces(), <span class="keyword">this</span>);
-}
-@Override
-<span class="keyword">public</span> Object invoke(Object proxy, Method method, Object[] args)
-        throws Throwable {
-    <span class="comment">// TODO Auto-generated method stub</span>
-    before();
-    Object temp=method.invoke(obj, args);
-    after();
-    <span class="keyword">return</span> temp;
-}
-<span class="keyword">public</span> <span class="keyword">void</span> before(){
-    System.out.println(<span class="string">"before!"</span>);
-}
-<span class="keyword">public</span> <span class="keyword">void</span> after(){
-    System.out.println(<span class="string">"after!"</span>);
-}
-}
-<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestInvocationHandler</span> {</span>
-<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(String[] args) {
-    Hello hello = (Hello)<span class="keyword">new</span> MyInvocationHandler().bind(<span class="keyword">new</span> HelloImpl());
-    hello.sayHello();
-}
-}
-</code></pre>
+        <p>
       
     </div>
     <footer>
       
+        
+          <div class="alignleft">
+            <a href="/2014/05/04/invocationhandler/#more" class="more-link">阅读全文</a>
+          </div>
         
         
       
@@ -157,9 +109,9 @@ Object obj;
   <h3 class="title">分类</h3>
   <ul class="entry">
   
-    <li><a href="/categories/视频/">视频</a><small>1</small></li>
-  
     <li><a href="/categories/java学习/">java学习</a><small>1</small></li>
+  
+    <li><a href="/categories/视频/">视频</a><small>1</small></li>
   
   </ul>
 </div>
@@ -170,13 +122,13 @@ Object obj;
   <h3 class="title">标签</h3>
   <ul class="entry">
   
-    <li><a href="/tags/足球/">足球</a><small>1</small></li>
-  
-    <li><a href="/tags/视频/">视频</a><small>1</small></li>
-  
     <li><a href="/tags/java/">java</a><small>1</small></li>
   
     <li><a href="/tags/动态代理/">动态代理</a><small>1</small></li>
+  
+    <li><a href="/tags/足球/">足球</a><small>1</small></li>
+  
+    <li><a href="/tags/视频/">视频</a><small>1</small></li>
   
   </ul>
 </div>
