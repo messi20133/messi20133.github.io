@@ -1,0 +1,309 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>有A,B,C三个线程, A线程输出A, B线程输出B, C线程输出C，要求, 同时启动三个线程, 按顺序输出ABC, 循环10次 | MESSI20133&#39;S BLOG</title>
+  <meta name="author" content="messi20133">
+  
+  <meta name="description" content="">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="有A,B,C三个线程, A线程输出A, B线程输出B, C线程输出C，要求, 同时启动三个线程, 按顺序输出ABC, 循环10次"/>
+  <meta property="og:site_name" content="MESSI20133&#39;S BLOG"/>
+
+  <link rel="alternate" href="/atom.xml" title="MESSI20133&#39;S BLOG" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">MESSI20133&#39;S BLOG</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">首页</a></li>
+    
+      <li><a href="/archives">文档</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+    <div class="gallery">
+  <div class="photoset">
+    
+      <img src="">
+    
+  </div>
+  <div class="control">
+    <div class="prev"></div>
+    <div class="next"></div>
+  </div>
+</div>
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-05-05T09:04:10.000Z"><a href="/2014/05/05/thread/">5月 5 2014</a></time>
+      
+      
+  
+    <h1 class="title">有A,B,C三个线程, A线程输出A, B线程输出B, C线程输出C，要求, 同时启动三个线程, 按顺序输出ABC, 循环10次</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p><a id="more"></a><br><strong>问题：有A,B,C三个线程, A线程输出A, B线程输出B, C线程输出C，要求, 同时启动三个线程, 按顺序输出ABC, 循环10次</strong></p>
+<hr>
+<p>方法一：使用ReentrantLock来解决,用静态变量state用来判断执行次序</p>
+<pre><code>package Thread;
+
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ABC</span> {</span>
+<span class="keyword">private</span> <span class="keyword">static</span> Lock lock=<span class="keyword">new</span> ReentrantLock();
+<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> state=<span class="number">0</span>;
+<span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadA</span> <span class="inheritance"><span class="keyword">extends</span></span> <span class="title">Thread</span>{</span>
+    @Override
+    <span class="keyword">public</span> <span class="keyword">void</span> run() {
+        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;){
+            lock.lock();
+            <span class="keyword">if</span>(state%<span class="number">3</span>==<span class="number">0</span>){
+                System.out.print(<span class="string">"A "</span>);
+                state++;
+                i++;
+            }
+            lock.unlock();
+        }
+    }
+}
+<span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadB</span> <span class="inheritance"><span class="keyword">extends</span></span> <span class="title">Thread</span>{</span>
+    @Override
+    <span class="keyword">public</span> <span class="keyword">void</span> run() {
+        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;){
+            lock.lock();
+            <span class="keyword">if</span>(state%<span class="number">3</span>==<span class="number">1</span>){
+                System.out.print(<span class="string">"B "</span>);
+                state++;
+                i++;
+            }
+            lock.unlock();
+        }
+    }
+}
+<span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadC</span> <span class="inheritance"><span class="keyword">extends</span></span> <span class="title">Thread</span>{</span>
+    <span class="keyword">public</span> <span class="keyword">void</span> run() {
+        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;){
+            lock.lock();
+            <span class="keyword">if</span>(state%<span class="number">3</span>==<span class="number">2</span>){
+                System.out.print(<span class="string">"C "</span>);
+                state++;
+                i++;
+            }
+            lock.unlock();
+        }
+    }
+}
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(String[] args) {
+    <span class="keyword">new</span> ThreadA().start();
+    <span class="keyword">new</span> ThreadB().start();
+    <span class="keyword">new</span> ThreadC().start();
+    }
+}
+</code></pre><hr>
+<p>方法二：使用信号量控制：</p>
+<pre><code>package Thread;
+import java.util.concurrent.Semaphore;
+
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ABC2</span> {</span>
+<span class="keyword">private</span> <span class="keyword">static</span> Semaphore A=<span class="keyword">new</span> Semaphore(<span class="number">1</span>);
+<span class="keyword">private</span> <span class="keyword">static</span> Semaphore B=<span class="keyword">new</span> Semaphore(<span class="number">1</span>);
+<span class="keyword">private</span> <span class="keyword">static</span> Semaphore C=<span class="keyword">new</span> Semaphore(<span class="number">1</span>);
+<span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadA</span> <span class="inheritance"><span class="keyword">extends</span></span> <span class="title">Thread</span>{</span>
+    @Override
+    <span class="keyword">public</span> <span class="keyword">void</span> run() {
+        <span class="keyword">try</span> {
+            <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;i++){
+                A.acquire();
+                System.out.print(<span class="string">"A "</span>);
+                B.release();
+            }
+        } <span class="keyword">catch</span> (InterruptedException e) {
+            <span class="comment">// TODO Auto-generated catch block</span>
+            e.printStackTrace();
+        }
+    }
+}
+<span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadB</span> <span class="inheritance"><span class="keyword">extends</span></span> <span class="title">Thread</span>{</span>
+    @Override
+    <span class="keyword">public</span> <span class="keyword">void</span> run() {
+        <span class="keyword">try</span> {
+            <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;i++){
+                B.acquire();
+                System.out.print(<span class="string">"B "</span>);
+                C.release();
+            }
+        } <span class="keyword">catch</span> (InterruptedException e) {
+            <span class="comment">// TODO Auto-generated catch block</span>
+            e.printStackTrace();
+        }
+    }
+}
+<span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadC</span> <span class="inheritance"><span class="keyword">extends</span></span> <span class="title">Thread</span>{</span>
+    @Override
+    <span class="keyword">public</span> <span class="keyword">void</span> run() {
+        <span class="keyword">try</span> {
+            <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;i++){
+                C.acquire();
+                System.out.println(<span class="string">"C"</span>);
+                A.release();
+            }
+        } <span class="keyword">catch</span> (InterruptedException e) {
+            <span class="comment">// TODO Auto-generated catch block</span>
+            e.printStackTrace();
+        }
+    }
+}
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(String[] args) throws     InterruptedException {
+    B.acquire();
+    C.acquire();
+    <span class="keyword">new</span> ThreadA().start();
+    <span class="keyword">new</span> ThreadB().start();
+    <span class="keyword">new</span> ThreadC().start();
+}
+}
+</code></pre>
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/categories/java学习/">java学习</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/tags/java/">java</a>, <a href="/tags/线程/">线程</a>
+  </div>
+
+        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone"></a><a href="#" class="bds_tsina" data-cmd="tsina"></a><a href="#" class="bds_tqq" data-cmd="tqq"></a><a href="#" class="bds_renren" data-cmd="renren"></a><a href="#" class="bds_weixin" data-cmd="weixin"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdPic":"","bdStyle":"0","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+<section id="comment">
+  <!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="2014/05/05/thread/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"messi20133"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+<div class="search">
+  <form action="http://google.com/search" method="get" accept-charset="utf-8">
+    <input type="text" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+
+
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/java学习/">java学习</a><small>2</small></li>
+  
+    <li><a href="/categories/视频/">视频</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+
+
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/java/">java</a><small>2</small></li>
+  
+    <li><a href="/tags/动态代理/">动态代理</a><small>1</small></li>
+  
+    <li><a href="/tags/线程/">线程</a><small>1</small></li>
+  
+    <li><a href="/tags/足球/">足球</a><small>1</small></li>
+  
+    <li><a href="/tags/视频/">视频</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+
+
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/java/" style="font-size: 20.00px;">java</a><a href="/tags/动态代理/" style="font-size: 10.00px;">动态代理</a><a href="/tags/线程/" style="font-size: 10.00px;">线程</a><a href="/tags/视频/" style="font-size: 10.00px;">视频</a><a href="/tags/足球/" style="font-size: 10.00px;">足球</a>
+  </div>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2014 messi20133
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>
