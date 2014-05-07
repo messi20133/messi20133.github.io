@@ -70,43 +70,15 @@
     </header>
     <div class="entry">
       
-        <p>const修饰指针的情况一般分为如下四种：</p>
-<pre><code><span class="keyword">int</span>  b=<span class="number">500</span>;  
-<span class="keyword">const</span> <span class="keyword">int</span> * a=&amp;b;  <span class="comment">//情况1</span>
-<span class="keyword">int</span> <span class="keyword">const</span> *a=&amp;b;  <span class="comment">//情况2</span>
-<span class="keyword">int</span> * <span class="keyword">const</span> a=&amp;b;  <span class="comment">//情况3</span>
-<span class="keyword">const</span> <span class="keyword">int</span> * <span class="keyword">const</span> a=&amp;b;  <span class="comment">//情况4</span>
-</code></pre><p>当const位于星号左侧，则const就是用来修饰指针所指向的变量，即，指针指向的为常量，<br>当const位于星号右侧，则const就是用来修饰指针本身，即，指针本身为常量</p>
-<p>对于情况1</p>
-<pre><code><span class="keyword">int</span> b=<span class="number">500</span>;
-<span class="keyword">const</span> <span class="keyword">int</span> *a=&amp;b;
-*a=<span class="number">600</span>;<span class="comment">//错误</span>
-</code></pre><p>也有别的办法修改*a的值，一种方法是通过改变b的值来改变a的值</p>
-<pre><code><span class="keyword">int</span> b=<span class="number">500</span>;
-<span class="keyword">const</span> <span class="keyword">int</span> *a=&amp;b;
-b=<span class="number">600</span>;
-</code></pre><p>另一种办法就是将a指向别处</p>
-<pre><code><span class="keyword">int</span> b=<span class="number">500</span>，c=<span class="number">600</span>;
-<span class="keyword">const</span> <span class="keyword">int</span> *a=&amp;b;
-a=&amp;c;
-</code></pre><p><strong>对于情况1，可以先不进行初始化，因为虽然指针的内容是常量，但是指针不是常量。</strong><br>对于情况3，必须同时初始化</p>
-<pre><code><span class="keyword">int</span> b=<span class="number">500</span>,c=<span class="number">500</span>;
-<span class="keyword">int</span> * <span class="keyword">const</span> a;<span class="comment">//错误，没有初始化</span>
-<span class="keyword">int</span> * <span class="keyword">const</span> a=&amp;b <span class="comment">//正确</span>
-*a=<span class="number">600</span>; <span class="comment">//正确，允许修改值</span>
-a=&amp;c;<span class="comment">//错误，</span>
-</code></pre><p>对于情况4，指针本身和指针指向的内容均为常量。</p>
-<hr>
-<p><strong>const成员函数:</strong><br>只读函数，不能修改数据成员的值。</p>
-<hr>
-<p><strong>const与#define相比有什么不同？</strong><br>const常量有数据类型，而宏常量没有数据类型，编译器对前者进行类型安全检查，对后者只是进行字符替换，没有安全性检查。</p>
-<hr>
-<p><strong>如何在const函数中修改数据成员变量？</strong><br>在数据成员前面加上mutable</p>
-
+        <p>
       
     </div>
     <footer>
       
+        
+          <div class="alignleft">
+            <a href="/2014/05/07/aboutconst/#more" class="more-link">阅读全文</a>
+          </div>
         
         
       
@@ -137,11 +109,11 @@ a=&amp;c;<span class="comment">//错误，</span>
   <h3 class="title">分类</h3>
   <ul class="entry">
   
+    <li><a href="/categories/C/C++/">C/C++</a><small>1</small></li>
+  
     <li><a href="/categories/java学习/">java学习</a><small>2</small></li>
   
     <li><a href="/categories/视频/">视频</a><small>1</small></li>
-  
-    <li><a href="/categories/C/C++/">C/C++</a><small>1</small></li>
   
   </ul>
 </div>
@@ -152,19 +124,19 @@ a=&amp;c;<span class="comment">//错误，</span>
   <h3 class="title">标签</h3>
   <ul class="entry">
   
+    <li><a href="/tags/c/c++/">c/c++</a><small>1</small></li>
+  
+    <li><a href="/tags/const/">const</a><small>1</small></li>
+  
     <li><a href="/tags/java/">java</a><small>2</small></li>
+  
+    <li><a href="/tags/动态代理/">动态代理</a><small>1</small></li>
   
     <li><a href="/tags/线程/">线程</a><small>1</small></li>
   
     <li><a href="/tags/足球/">足球</a><small>1</small></li>
   
     <li><a href="/tags/视频/">视频</a><small>1</small></li>
-  
-    <li><a href="/tags/动态代理/">动态代理</a><small>1</small></li>
-  
-    <li><a href="/tags/c/c++/">c/c++</a><small>1</small></li>
-  
-    <li><a href="/tags/const/">const</a><small>1</small></li>
   
   </ul>
 </div>
