@@ -3,13 +3,15 @@
 <head>
   <meta charset="utf-8">
   
-  <title>数组 | MESSI20133&#39;S BLOG</title>
+  <title>给定数组a[N]构造数组b [N] | MESSI20133&#39;S BLOG</title>
   <meta name="author" content="messi20133">
+  
+  <meta name="description" content="">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  
+  <meta property="og:title" content="给定数组a[N]构造数组b [N]"/>
   <meta property="og:site_name" content="MESSI20133&#39;S BLOG"/>
 
   <link rel="alternate" href="/atom.xml" title="MESSI20133&#39;S BLOG" type="application/atom+xml">
@@ -37,12 +39,7 @@
 </nav>
 <div class="clearfix"></div></header>
   <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper">
-<h2 class="archive-title tag">数组</h2>
-
-
-  
-    <article class="post">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
   
     <div class="gallery">
   <div class="photoset">
@@ -64,23 +61,57 @@
       
       
   
-    <h1 class="title"><a href="/2014/05/12/createarrayb/">给定数组a[N]构造数组b [N]</a></h1>
+    <h1 class="title">给定数组a[N]构造数组b [N]</h1>
   
 
     </header>
     <div class="entry">
       
-        <p>
+        <p><a id="more"></a><br>题目：给定一个数组a[N]，我们希望构造数组b [N]，其中b[j]=a[0]*a[1]…a[N-1] / a[j]，在构造过程中，不允许使用除法：要求O（1）空间复杂度和O（n）的时间复杂度；除遍历计数器与a[N] b[N]外，不可使用新的变量（包括栈临时变量、堆空间和全局静态变量等）</p>
+<p>分析：<br>设 b[0]=1;<br>令b[i]=b[i-1]a[i-1]<br>所以：<br>b[1]=a[0]<br>b[2]=b[1]a[1]=a[0]a[1];<br>.<br>.<br>.<br>b[i]=a[0]*….a[i-1]<br>通过b[0]这个变量来迭代出1, a[n-1], a[n-2]a[n-1], a[n-3]a[n-2]a[n-1], … , a[1]a[2]a[3]…a[n-1]，迭代过程中分别乘以b[n-1], b[n-2], … , b[0]</p>
+<p>代码如下：</p>
+<pre><code>package StringAndArray;
+
+import java.util.Arrays;
+
+<span class="keyword">public</span> <span class="keyword">class</span> CreareArrayB {
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Translate</span>(<span class="keyword">int</span> A[],<span class="keyword">int</span> B[]){
+    <span class="keyword">int</span> n=A.length;
+    B[<span class="number">0</span>]=<span class="number">1</span>;
+    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;n;i++)
+        B[i]=B[i-<span class="number">1</span>]*A[i-<span class="number">1</span>];
+    <span class="keyword">for</span>(<span class="keyword">int</span> i=n-<span class="number">1</span>;i&gt;=<span class="number">1</span>;i--){
+        B[i]=B[i]*B[<span class="number">0</span>];
+        B[<span class="number">0</span>]=B[<span class="number">0</span>]*A[i];
+    }
+}
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) {
+    <span class="keyword">int</span>[] A={<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>};
+    <span class="keyword">int</span>[] B=<span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">4</span>];
+    Translate(A,B);
+    System.<span class="keyword">out</span>.println(Arrays.toString(A));
+    System.<span class="keyword">out</span>.println(Arrays.toString(B));
+}
+}
+</code></pre>
       
     </div>
     <footer>
       
         
-          <div class="alignleft">
-            <a href="/2014/05/12/createarrayb/#more" class="more-link">阅读全文</a>
-          </div>
+  
+  <div class="categories">
+    <a href="/categories/算法/">算法</a>
+  </div>
+
         
-        
+  
+  <div class="tags">
+    <a href="/tags/数组/">数组</a>
+  </div>
+
+        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone"></a><a href="#" class="bds_tsina" data-cmd="tsina"></a><a href="#" class="bds_tqq" data-cmd="tqq"></a><a href="#" class="bds_renren" data-cmd="renren"></a><a href="#" class="bds_weixin" data-cmd="weixin"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdPic":"","bdStyle":"0","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
       
       <div class="clearfix"></div>
     </footer>
@@ -88,60 +119,26 @@
 </article>
 
 
-  
-    <article class="post">
-  
-    <div class="gallery">
-  <div class="photoset">
-    
-      <img src="">
-    
-  </div>
-  <div class="control">
-    <div class="prev"></div>
-    <div class="next"></div>
-  </div>
-</div>
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2014-05-10T08:29:05.000Z"><a href="/2014/05/10/twosortarray/">5月 10 2014</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2014/05/10/twosortarray/">求两个已排序的数组的中位数,要求时间复杂度为log(m+n)</a></h1>
-  
 
-    </header>
-    <div class="entry">
-      
-        <p>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2014/05/10/twosortarray/#more" class="more-link">阅读全文</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
+<section id="comment">
+  <!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="2014/05/12/createarrayb/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"messi20133"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+</section>
 
-
-  
-
-  <nav id="pagination">
-  
-  
-  <div class="clearfix"></div>
-</nav>
 </div></div>
     <aside id="sidebar" class="alignright">
 <div class="search">
