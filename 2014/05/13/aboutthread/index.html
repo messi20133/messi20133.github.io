@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>将一个整数nSum分解成num个整数和的形式，如nSum=6，num=3那么，nSum就可以分解成为1 1 4；1 2 3；222。 | MESSI20133&#39;S BLOG</title>
+  <title>线程和进程区别和联系 什么是“线程安全” | MESSI20133&#39;S BLOG</title>
   <meta name="author" content="messi20133">
   
   <meta name="description" content="">
@@ -11,7 +11,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="将一个整数nSum分解成num个整数和的形式，如nSum=6，num=3那么，nSum就可以分解成为1 1 4；1 2 3；222。"/>
+  <meta property="og:title" content="线程和进程区别和联系 什么是“线程安全”"/>
   <meta property="og:site_name" content="MESSI20133&#39;S BLOG"/>
 
   <link rel="alternate" href="/atom.xml" title="MESSI20133&#39;S BLOG" type="application/atom+xml">
@@ -57,50 +57,23 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2014-05-08T13:14:19.000Z"><a href="/2014/05/08/interview1/">5月 8 2014</a></time>
+        <time datetime="2014-05-13T05:41:26.000Z"><a href="/2014/05/13/aboutthread/">5月 13 2014</a></time>
       
       
   
-    <h1 class="title">将一个整数nSum分解成num个整数和的形式，如nSum=6，num=3那么，nSum就可以分解成为1 1 4；1 2 3；222。</h1>
+    <h1 class="title">线程和进程区别和联系 什么是“线程安全”</h1>
   
 
     </header>
     <div class="entry">
       
-        <p><a id="more"></a><br><strong>如题：将一个整数nSum分解成num个整数和的形式，如nSum=6，num=3那么，nSum就可以分解成为1 1 4；1 2 3；222。请编程实现！</strong></p>
-<p>分析：采用递归的算法，分解时，层次（nDepth，基于0）每深一层，其层所对应的值就应该不比上一层的值小，所以循环体中变量i应从上一层的值开始，直到nSum/num时截止，因为最后一组最大情况应都为nSum/num。其中nDepth+num的值为总的分解个数。</p>
-<p>代码如下：</p>
-<pre><code>package PermutationsAndcombinations;
-<span class="comment">/*
- * 将一个整数nSum分解成num个整数和的形式，如nSum=6，num=3那么，nSum就        可以分解成为1 1 4；1 2 3；222。
- */</span>
-<span class="keyword">public</span> <span class="keyword">class</span> SpiteNum {
-<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">SegNum</span>(<span class="keyword">int</span> nSum,<span class="keyword">int</span> num,<span class="keyword">int</span> pData[],<span class="keyword">int</span> pDepth){
-    <span class="keyword">if</span>(<span class="number">1</span>==num){
-        <span class="comment">//当num=1的时候输出pData中的值，</span>
-        pData[pDepth]=nSum;  <span class="comment">//别忘了把nSum加上</span>
-        <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;num+pDepth;j++){
-            System.<span class="keyword">out</span>.print(pData[j]+<span class="string">" "</span>);
-        }
-        System.<span class="keyword">out</span>.println();
-    }<span class="keyword">else</span>{
-        <span class="keyword">int</span> i=(pDepth==<span class="number">0</span>?<span class="number">1</span>:pData[pDepth-<span class="number">1</span>]);
-        <span class="keyword">for</span>(;i&lt;=nSum/num;i++){
-            pData[pDepth++]=i; 
-            SegNum(nSum-i, num-<span class="number">1</span>, pData, pDepth); <span class="comment">//开始深的一层</span>
-            pDepth--;
-        }
-    }
-}
-<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) {
-    <span class="comment">//测试代码</span>
-    <span class="keyword">int</span> nSum=<span class="number">10</span>;
-    <span class="keyword">int</span> num=<span class="number">3</span>;
-    <span class="keyword">int</span>[] pData=<span class="keyword">new</span> <span class="keyword">int</span>[num];
-    SegNum(nSum,num,pData,<span class="number">0</span>);
-    }
-}
-</code></pre>
+        <p><a id="more"></a><br>（1）定义：<br>一、进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动，是系统进行资源分配和调度的一个独立单位。<br>二、线程是进程的一个实体，是CPU调度和分派的基本单位，他是比进程更小的能独立运行的基本单位，线程自己基本上不拥有系统资源，只拥有一点在运行中必不可少的资源（如程序计数器，一组寄存器和栈），一个线程可以创建和撤销另一个线程；<br>进程和线程的关系：<br>（1）一个线程只能属于一个进程，而一个进程可以有多个线程，但至少有一个线程。<br>（2）资源分配给进程，同一进程的所有线程共享该进程的所有资源。<br>（3）线程在执行过程中，需要协作同步。不同进程的线程间要利用消息通信的办法实现同步。<br>（4）处理机分给线程，即真正在处理机上运行的是线程。<br>（5）线程是指进程内的一个执行单元，也是进程内的可调度实体。<br>线程与进程的区别：<br>（1）调度：线程作为调度和分配的基本单位，进程作为拥有资源的基本单位。<br>（2）并发性：不仅进程之间可以并发执行，同一个进程的多个线程之间也可以并发执行。<br>（3）拥有资源：进程是拥有资源的一个独立单位，线程不拥有系统资源，但可以访问隶属于进程的资源。<br>（4）系统开销：在创建或撤销进程的时候，由于系统都要为之分配和回收资源，导致系统的明显大于创建或撤销线程时的开销。但进程有独立的地址空间，进程崩溃后，在保护模式下不会对其他的进程产生影响，而线程只是一个进程中的不同的执行路径。线程有自己的堆栈和局部变量，但线程之间没有单独的地址空间，一个线程死掉就等于整个进程死掉，所以多进程的程序要比多线程的程序健壮，但是在进程切换时，耗费的资源较大，效率要差些。<br>线程的划分尺度小于进程，使得多线程程序的并发性高。</p>
+<p>另外，进程在执行过程中拥有独立的内存单元，而多个线程共享内存，从而极大的提高了程序运行效率。</p>
+<p>线程在执行过程中，每个独立的线程有一个程序运行的入口，顺序执行序列和程序的出口。但是线程不能够独立执行，必须依存在应用程序中，有应用程序提供多个线程执行控制。</p>
+<p>从逻辑角度看，多线程的意义子啊与一个应用程序中，有多个执行部分可以同时执行。但操作系统并没有将多个线程看做多个独立的应用，来实现进程的调度和管理以及资源分配。这就是进程和线程的重要区别。</p>
+<p>（2）线程安全</p>
+<p>如果代码所在的进程中有多个线程在同时运行，而这些线程可能会同时运行这段代码。如果每次运行结果和单线程运行的结果是一样的，而且其他的变量的值也和预期的是一样的，就是线程安全的。</p>
+
       
     </div>
     <footer>
@@ -108,13 +81,13 @@
         
   
   <div class="categories">
-    <a href="/categories/java学习/">java学习</a>, <a href="/categories/java学习/算法/">算法</a>
+    <a href="/categories/多线程/">多线程</a>
   </div>
 
         
   
   <div class="tags">
-    <a href="/tags/java/">java</a>, <a href="/tags/算法/">算法</a>
+    <a href="/tags/多线程/">多线程</a>
   </div>
 
         <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone"></a><a href="#" class="bds_tsina" data-cmd="tsina"></a><a href="#" class="bds_tqq" data-cmd="tqq"></a><a href="#" class="bds_renren" data-cmd="renren"></a><a href="#" class="bds_weixin" data-cmd="weixin"></a></div>
@@ -129,7 +102,7 @@
 
 <section id="comment">
   <!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="2014/05/08/interview1/"></div>
+	<div class="ds-thread" data-thread-key="2014/05/13/aboutthread/"></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
