@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>线程和进程区别和联系 什么是“线程安全” | MESSI20133&#39;S BLOG</title>
+  <title>归并排序与逆序对 | MESSI20133&#39;S BLOG</title>
   <meta name="author" content="messi20133">
   
   <meta name="description" content="">
@@ -11,7 +11,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="线程和进程区别和联系 什么是“线程安全”"/>
+  <meta property="og:title" content="归并排序与逆序对"/>
   <meta property="og:site_name" content="MESSI20133&#39;S BLOG"/>
 
   <link rel="alternate" href="/atom.xml" title="MESSI20133&#39;S BLOG" type="application/atom+xml">
@@ -57,23 +57,71 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2014-05-13T05:41:26.000Z"><a href="/2014/05/13/aboutthread/">5月 13 2014</a></time>
+        <time datetime="2014-05-13T08:41:58.000Z"><a href="/2014/05/13/mergesort/">5月 13 2014</a></time>
       
       
   
-    <h1 class="title">线程和进程区别和联系 什么是“线程安全”</h1>
+    <h1 class="title">归并排序与逆序对</h1>
   
 
     </header>
     <div class="entry">
       
-        <p><a id="more"></a><br>（1）定义：<br>一、进程是具有一定独立功能的程序关于某个数据集合上的一次运行活动，是系统进行资源分配和调度的一个独立单位。<br>二、线程是进程的一个实体，是CPU调度和分派的基本单位，他是比进程更小的能独立运行的基本单位，线程自己基本上不拥有系统资源，只拥有一点在运行中必不可少的资源（如程序计数器，一组寄存器和栈），一个线程可以创建和撤销另一个线程；<br>进程和线程的关系：<br>（1）一个线程只能属于一个进程，而一个进程可以有多个线程，但至少有一个线程。<br>（2）资源分配给进程，同一进程的所有线程共享该进程的所有资源。<br>（3）线程在执行过程中，需要协作同步。不同进程的线程间要利用消息通信的办法实现同步。<br>（4）处理机分给线程，即真正在处理机上运行的是线程。<br>（5）线程是指进程内的一个执行单元，也是进程内的可调度实体。<br>线程与进程的区别：<br>（1）调度：线程作为调度和分配的基本单位，进程作为拥有资源的基本单位。<br>（2）并发性：不仅进程之间可以并发执行，同一个进程的多个线程之间也可以并发执行。<br>（3）拥有资源：进程是拥有资源的一个独立单位，线程不拥有系统资源，但可以访问隶属于进程的资源。<br>（4）系统开销：在创建或撤销进程的时候，由于系统都要为之分配和回收资源，导致系统的明显大于创建或撤销线程时的开销。但进程有独立的地址空间，进程崩溃后，在保护模式下不会对其他的进程产生影响，而线程只是一个进程中的不同的执行路径。线程有自己的堆栈和局部变量，但线程之间没有单独的地址空间，一个线程死掉就等于整个进程死掉，所以多进程的程序要比多线程的程序健壮，但是在进程切换时，耗费的资源较大，效率要差些。<br>线程的划分尺度小于进程，使得多线程程序的并发性高。</p>
-<p>另外，进程在执行过程中拥有独立的内存单元，而多个线程共享内存，从而极大的提高了程序运行效率。</p>
-<p>线程在执行过程中，每个独立的线程有一个程序运行的入口，顺序执行序列和程序的出口。但是线程不能够独立执行，必须依存在应用程序中，有应用程序提供多个线程执行控制。</p>
-<p>从逻辑角度看，多线程的意义子啊与一个应用程序中，有多个执行部分可以同时执行。但操作系统并没有将多个线程看做多个独立的应用，来实现进程的调度和管理以及资源分配。这就是进程和线程的重要区别。</p>
-<p>（2）线程安全</p>
-<p>如果代码所在的进程中有多个线程在同时运行，而这些线程可能会同时运行这段代码。如果每次运行结果和单线程运行的结果是一样的，而且其他的变量的值也和预期的是一样的，就是线程安全的。</p>
+        <p><a id="more"></a><br>题目：给定一整型数组，若数组中某个下标值大的元素值小于某个下标值比它小的元素值，称这是一个反序。<br>即：数组a[]; 对于i &lt; j 且 a[i] &gt; a[j],则称这是一个反序。<br>给定一个数组，要求写一个函数，计算出这个数组里所有反序的个数。<br>这个求逆序对的问题可以和归并排序一起完成，在完成归并排序的同时完成逆序对的求解</p>
+<pre><code>package Sort;
 
+import java.util.Arrays;
+<span class="comment">/*
+*二路归并排序 
+*/</span>
+<span class="keyword">public</span> <span class="keyword">class</span> MergeSort {
+<span class="comment">//    public static int inversions=0;</span>
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">merge</span>(<span class="keyword">int</span> num[],<span class="keyword">int</span> start,<span class="keyword">int</span> mid,<span class="keyword">int</span> end){
+    System.<span class="keyword">out</span>.println(start+ <span class="string">" "</span>+mid+<span class="string">" "</span>+end);
+    <span class="keyword">int</span>[] temp=<span class="keyword">new</span> <span class="keyword">int</span>[end-start+<span class="number">1</span>];
+    <span class="keyword">int</span> m=start;
+    <span class="keyword">int</span> n=mid+<span class="number">1</span>;
+    <span class="keyword">int</span> i=<span class="number">0</span>;
+    <span class="keyword">int</span> inversions=<span class="number">0</span>;
+    <span class="keyword">while</span>(m&lt;mid+<span class="number">1</span>&amp;&amp;n&lt;end+<span class="number">1</span>){
+        <span class="keyword">if</span>(num[m]&lt;num[n]){
+            temp[i++]=num[m++];
+        }<span class="keyword">else</span>{
+            temp[i++]=num[n++];
+            inversions+=mid-m+<span class="number">1</span>;
+            <span class="comment">//举个例子，原序列是9 10 2 4 3  </span>
+            <span class="comment">//最后要合并的两个左右序列是2 9 10 和4 3  </span>
+            <span class="comment">//刚开始a[i]=2 a[j] = 4，a[i]&lt;a[j]不存在逆序对，将i++,a[i]-&gt;9  </span>
+            <span class="comment">//这时候a[i]&gt;a[j],存在逆序对，并且前一个序列中a[i+1...mid]因为是已经排序的，  </span>
+            <span class="comment">//后面的每个数肯定也大于a[i],当然也大于a[j],当然也和a[j]成逆序对，这时候的逆序对的个数应该为mid-i+1  </span>
+        }
+    }
+    <span class="keyword">while</span>(m&lt;mid+<span class="number">1</span>)
+        temp[i++]=num[m++];
+    <span class="keyword">while</span>(n&lt;end+<span class="number">1</span>)
+        temp[i++]=num[n++];
+    <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;temp.length;j++)
+        num[j+start]=temp[j];
+    <span class="keyword">return</span> inversions;
+}
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">mergeSort</span>(<span class="keyword">int</span> num[],<span class="keyword">int</span> start,<span class="keyword">int</span> end){
+    <span class="keyword">int</span> inversions=<span class="number">0</span>;
+    <span class="keyword">if</span>(start&lt;end){
+        <span class="keyword">int</span> mid=(start+end)/<span class="number">2</span>;
+        inversions+=mergeSort(num, start, mid);
+        inversions+=mergeSort(num, mid+<span class="number">1</span>, end);
+        inversions+=merge(num,start,mid,end);
+    }
+    <span class="keyword">return</span> inversions;
+}
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) {
+    <span class="keyword">int</span>[] num={<span class="number">9</span>,<span class="number">8</span>,<span class="number">7</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">2</span>,<span class="number">1</span>,<span class="number">3</span>,<span class="number">6</span>,<span class="number">0</span>};
+    <span class="keyword">int</span> result=mergeSort(num, <span class="number">0</span>,num.length-<span class="number">1</span>);
+    System.<span class="keyword">out</span>.println(Arrays.toString(num));
+    System.<span class="keyword">out</span>.println(result);
+}
+}
+</code></pre>
       
     </div>
     <footer>
@@ -81,13 +129,13 @@
         
   
   <div class="categories">
-    <a href="/categories/多线程/">多线程</a>
+    <a href="/categories/排序/">排序</a>
   </div>
 
         
   
   <div class="tags">
-    <a href="/tags/多线程/">多线程</a>
+    <a href="/tags/归并排序/">归并排序</a>, <a href="/tags/逆序对/">逆序对</a>
   </div>
 
         <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone"></a><a href="#" class="bds_tsina" data-cmd="tsina"></a><a href="#" class="bds_tqq" data-cmd="tqq"></a><a href="#" class="bds_renren" data-cmd="renren"></a><a href="#" class="bds_weixin" data-cmd="weixin"></a></div>
@@ -102,7 +150,7 @@
 
 <section id="comment">
   <!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="2014/05/13/aboutthread/"></div>
+	<div class="ds-thread" data-thread-key="2014/05/13/mergesort/"></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
