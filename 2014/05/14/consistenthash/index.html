@@ -1,0 +1,259 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>一致性哈希算法--负载均衡 | MESSI20133&#39;S BLOG</title>
+  <meta name="author" content="messi20133">
+  
+  <meta name="description" content="">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="一致性哈希算法--负载均衡"/>
+  <meta property="og:site_name" content="MESSI20133&#39;S BLOG"/>
+
+  <link rel="alternate" href="/atom.xml" title="MESSI20133&#39;S BLOG" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">MESSI20133&#39;S BLOG</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">首页</a></li>
+    
+      <li><a href="/archives">文档</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+    <div class="gallery">
+  <div class="photoset">
+    
+      <img src="">
+    
+  </div>
+  <div class="control">
+    <div class="prev"></div>
+    <div class="next"></div>
+  </div>
+</div>
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-05-14T08:35:16.000Z"><a href="/2014/05/14/consistenthash/">5月 14 2014</a></time>
+      
+      
+  
+    <h1 class="title">一致性哈希算法--负载均衡</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p><a id="more"></a><br>问题描述： 例如手机朋友网有n个服务器，为了方便用户的访问会在服务器上缓存数据，因此用户每次访问的时候最好能保持同一台服务器。<br>已有的做法是根据ServerIPIndex[QQNUM%n]得到请求的服务器，这种方法很方便将用户分到不同的服务器上去。但是如果一台服务器死掉了，那么n就变为了n-1，那么ServerIPIndex[QQNUM%n]与ServerIPIndex[QQNUM%（n-1）]基本上都不一样了，所以大多数用户的请求都会转到其他服务器，这样会发生大量访问错误。<br>问： 如何改进或者换一种方法，使得：<br>（1）一台服务器死掉后，不会造成大面积的访问错误，<br>（2）原有的访问基本还是停留在同一台服务器上；<br>（3）尽量考虑负载均衡。（思路：往分布式一致哈希算法方面考虑。）</p>
+<p>分析：<br>1.最土的办法还是用模余方法：做法很简单，假设有N台服务器，现在完好的  是M（M&lt;=N),先用N求模，如果不落在完好的机器上，然后再用N-1求模，直到M.这种方式对于坏的机器不多的情况下，具有更好的稳定性。</p>
+<hr>
+<p>2.<strong>一致性哈希算法</strong>。<br>    下面，本文剩下部分重点来讲讲这个一致性哈希算法。<br><strong>应用场景</strong><br>在做服务器负载均衡时候可供选择的负载均衡的算法有很多，包括：  轮循算法（Round Robin）、哈希算法（HASH）、最少连接算法（Least Connection）、响应速度算法（Response Time）、加权法（Weighted ）等。其中哈希算法是最为常用的算法.<br>    典型的应用场景是： 有N台服务器提供缓存服务，需要对服务器进行负载均衡，将请求平均分发到每台服务器上，每台机器负责1/N的服务。<br>    常用的算法是对hash结果取余数 (hash() mod N)：对机器编号从0到N-1，按照自定义的hash()算法，对每个请求的hash()值按N取模，得到余数i，然后将请求分发到编号为i的机器。但这样的算法方法存在致命问题，如果某一台机器down机，那么应该落在该机器的请求就无法得到正确的处理，这时需要将当掉的服务器从算法中去掉，此时候会有(N-1)/N的服务器的缓存数据需要重新进行计算；如果新增一台机器，会有N /(N+1)的服务器的缓存数据需要进行重新计算。对于系统而言，这通常是不可接受的颠簸（因为这意味着大量缓存的失效或者数据需要转移）。那么，如何设计一个负载均衡策略，使得受到影响的请求尽可能的少呢？<br>    在Memcached、Key-Value Store、Bittorrent DHT、LVS中都采用了Consistent Hashing算法，可以说Consistent Hashing 是分布式系统负载均衡的首选算法。</p>
+<hr>
+<p><strong>Consistent Hashing算法描述</strong><br>比如你有 N 个 cache 服务器（后面简称 cache ），那么如何将一个对象 object 映射到 N 个 cache上呢，你很可能会采用类似下面的通用方法计算 object 的 hash 值，然后均匀的映射到到 N 个 cache ；</p>
+<p>hash(object)%N</p>
+<p>一切都运行正常，再考虑如下的两种情况；</p>
+<p>1.一个 cache 服务器 m down掉了（在实际应用中必须要考虑这种情况），这样所有映射到 cache m 的对象都会失效，怎么办，需要把 cache m 从 cache 中移除，这时候 cache 是 N-1 台，映射公式变成了 hash(object)%(N-1) ；<br>2.由于访问加重，需要添加 cache ，这时候 cache 是 N+1 台，映射公式变成了 hash(object)%(N+1) ；<br>    1 和 2 意味着什么？这意味着突然之间几乎所有的 cache 都失效了。对于服务器而言，这是一场灾难，洪水般的访问都会直接冲向后台服务器；再来考虑第三个问题，由于硬件能力越来越强，你可能想让后面添加的节点多做点活，显然上面的 hash 算法也做不到。<br>    有什么方法可以改变这个状况呢，这就是consistent hashing。<br><strong>hash 算法和单调性</strong><br>    Hash 算法的一个衡量指标是单调性（ Monotonicity ），定义如下：<br>单调性是指如果已经有一些内容通过哈希分派到了相应的缓冲中，又有新的缓冲加入到系统中。哈希的结果应能够保证原有已分配的内容可以被映射到新的缓冲中去，而不会被映射到旧的缓冲集合中的其他缓冲区。<br>容易看到，上面的简单 hash 算法 hash(object)%N 难以满足单调性要求。<br><strong>consistent hashing 算法的原理</strong><br>    consistent hashing 是一种 hash 算法，简单的说，在移除 / 添加一个 cache 时，它能够尽可能小的改变已存在 key 映射关系，尽可能的满足单调性的要求。<br>下面就来按照 5 个步骤简单讲讲 consistent hashing 算法的基本原理。<br><em>1  环形hash 空间</em><br>考虑通常的 hash 算法都是将 value 映射到一个 32 位的 key 值，也即是 0~2^32-1 次方的数值空间；我们可以将这个空间想象成一个首（ 0 ）尾（ 2^32-1 ）相接的圆环，如下面下图所示的那样：<br><img src="http://www.codeproject.com/KB/recipes/lib-conhash/circle.JPG" alt=""></p>
+<p> <em>2 把对象映射到hash 空间</em><br>  接下来考虑 4 个对象 object1~object4 ，通过 hash 函数计算出的 hash 值 key 在环上的分布如下图 所示。</p>
+<p>hash(object1) = key1;<br>… …<br>hash(object4) = key4;<br><img src="http://www.codeproject.com/KB/recipes/lib-conhash/object.JPG" alt="此处输入图片的描述"></p>
+<p><em>3 把cache 映射到hash 空间</em><br>Consistent hashing 的基本思想就是将对象和 cache 都映射到同一个 hash 数值空间中，并且使用相同的hash 算法。<br>假设当前有 A,B 和 C 共 3 台 cache ，那么其映射结果将如图 3 所示，他们在 hash 空间中，以对应的 hash值排列。<br>hash(cache A) = key A;<br>… …<br>hash(cache C) = key C;<br><img src="http://www.codeproject.com/KB/recipes/lib-conhash/cache.JPG" alt=""></p>
+<p><em>4 把对象映射到cache</em><br>现在 cache 和对象都已经通过同一个 hash 算法映射到 hash 数值空间中了，接下来要考虑的就是如何将对象映射到 cache 上面了。<br>    在这个环形空间中，如果沿着顺时针方向从对象的 key 值出发，直到遇见一个 cache ，那么就将该对象存储在这个 cache 上，因为对象和 cache 的 hash 值是固定的，因此这个 cache 必然是唯一和确定的。这样不就找到了对象和 cache 的映射方法了吗？！<br>依然继续上面的例子，那么根据上面的方法，对象 object1 将被存储到 cache A 上； object2和 object3 对应到 cache C ； object4 对应到 cache B ；<br><strong>移除 cache</strong><br>考虑假设 cache B 挂掉了，根据上面讲到的映射方法，这时受影响的将仅是那些沿 cache B 顺时针遍历直到下一个 cache （ cache C ）之间的对象，也即是本来映射到 cache B 上的那些对象。 因此这里仅需要变动对象 object4 ，将其重新映射到 cache C 上即可<br><img src="http://www.codeproject.com/KB/recipes/lib-conhash/remove.JPG" alt=""></p>
+<p>  <strong>添加 cache</strong><br>  再考虑添加一台新的 cache D 的情况，假设在这个环形 hash 空间中， cache D 被映射在对象 object2 和object3 之间。这时受影响的将仅是那些沿 cache D 逆时针遍历直到下一个 cache （ cache B ）之间的对象（它们是也本来映射到 cache C 上对象的一部分），将这些对象重新映射到 cache D 上即可。 因此这里仅需要变动对象 object2 ，将其重新映射到 cache D 上<br>  <img src="http://www.codeproject.com/KB/recipes/lib-conhash/add.JPG" alt=""></p>
+<p>  <strong>虚拟节点</strong><br>  考量 Hash 算法的另一个指标是平衡性 (Balance) ，定义如下：</p>
+<p>平衡性</p>
+<p>平衡性是指哈希的结果能够尽可能分布到所有的缓冲中去，这样可以使得所有的缓冲空间都得到利用。 hash 算法并不是保证绝对的平衡，如果 cache 较少的话，对象并不能被均匀的映射到 cache 上，比如在上面的例子中，仅部署 cache A 和 cache C 的情况下，在 4 个对象中， cache A 仅存储了 object1 ，而 cache C 则存储了 object2 、 object3 和 object4 ；分布是很不均衡的。</p>
+<p>为了解决这种情况， consistent hashing 引入了“虚拟节点”的概念，它可以如下定义：</p>
+<p>“虚拟节点”（ virtual node ）是实际节点在 hash 空间的复制品（ replica ），一实际个节点对应了若干个“虚拟节点”，这个对应个数也成为“复制个数”，“虚拟节点”在 hash 空间中以 hash 值排列。仍以仅部署 cache A 和 cache C 的情况为例，在上图中我们已经看到， cache 分布并不均匀。现在我们引入虚拟节点，并设置“复制个数”为 2 ，这就意味着一共会存在 4 个“虚拟节点”， cache A1, cache A2 代表了 cache A ； cache C1, cache C2 代表了 cache C ；假设一种比较理想的情况<br><img src="http://www.codeproject.com/KB/recipes/lib-conhash/virtual.JPG" alt=""></p>
+<p>  此时，对象到“虚拟节点”的映射关系为：</p>
+<p>objec1-&gt;cache A2 ； objec2-&gt;cache A1 ； objec3-&gt;cache C1 ； objec4-&gt;cache C2 ；因此对象 object1 和 object2 都被映射到了 cache A 上，而 object3 和 object4 映射到了 cache C 上；平衡性有了很大提高。引入“虚拟节点”后，映射关系就从 { 对象 -&gt; 节点 } 转换到了 { 对象 -&gt; 虚拟节点 } 。查询物体所在 cache时的映射关系如下图 所示。<br><img src="http://www.codeproject.com/KB/recipes/lib-conhash/map.JPG" alt="此处输入图片的描述"></p>
+<p>  虚拟节点”的 hash 计算可以采用对应节点的 IP 地址加数字后缀的方式。例如假设 cache A 的 IP 地址为202.168.14.241 。引入“虚拟节点”前，计算 cache A 的 hash 值：<br>Hash(“202.168.14.241”);<br>引入“虚拟节点”后，计算“虚拟节”点 cache A1 和 cache A2 的 hash 值：<br>Hash(“202.168.14.241#1”);  // cache A1<br>Hash(“202.168.14.241#2”);  // cache A2</p>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/categories/一致性哈希/">一致性哈希</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/tags/哈希/">哈希</a>, <a href="/tags/负载均衡/">负载均衡</a>
+  </div>
+
+        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone"></a><a href="#" class="bds_tsina" data-cmd="tsina"></a><a href="#" class="bds_tqq" data-cmd="tqq"></a><a href="#" class="bds_renren" data-cmd="renren"></a><a href="#" class="bds_weixin" data-cmd="weixin"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdPic":"","bdStyle":"0","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+<section id="comment">
+  <!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="2014/05/14/consistenthash/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"messi20133"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+<div class="search">
+  <form action="http://google.com/search" method="get" accept-charset="utf-8">
+    <input type="text" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+
+
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/C/C++/">C/C++</a><small>1</small></li>
+  
+    <li><a href="/categories/多线程/">多线程</a><small>1</small></li>
+  
+    <li><a href="/categories/一致性哈希/">一致性哈希</a><small>1</small></li>
+  
+    <li><a href="/categories/算法/">算法</a><small>2</small></li>
+  
+    <li><a href="/categories/java学习/">java学习</a><small>5</small></li>
+  
+    <li><a href="/categories/java学习/算法/">算法</a><small>3</small></li>
+  
+    <li><a href="/categories/算法/树/">树</a><small>1</small></li>
+  
+    <li><a href="/categories/排序/">排序</a><small>1</small></li>
+  
+    <li><a href="/categories/随机概率/">随机概率</a><small>1</small></li>
+  
+    <li><a href="/categories/二叉树/">二叉树</a><small>1</small></li>
+  
+    <li><a href="/categories/视频/">视频</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+
+
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/c/c++/">c/c++</a><small>1</small></li>
+  
+    <li><a href="/tags/const/">const</a><small>1</small></li>
+  
+    <li><a href="/tags/多线程/">多线程</a><small>1</small></li>
+  
+    <li><a href="/tags/哈希/">哈希</a><small>1</small></li>
+  
+    <li><a href="/tags/负载均衡/">负载均衡</a><small>1</small></li>
+  
+    <li><a href="/tags/数组/">数组</a><small>3</small></li>
+  
+    <li><a href="/tags/java/">java</a><small>4</small></li>
+  
+    <li><a href="/tags/算法/">算法</a><small>1</small></li>
+  
+    <li><a href="/tags/动态代理/">动态代理</a><small>2</small></li>
+  
+    <li><a href="/tags/二叉树/">二叉树</a><small>2</small></li>
+  
+    <li><a href="/tags/归并排序/">归并排序</a><small>1</small></li>
+  
+    <li><a href="/tags/逆序对/">逆序对</a><small>1</small></li>
+  
+    <li><a href="/tags/逆波兰表达式/">逆波兰表达式</a><small>1</small></li>
+  
+    <li><a href="/tags/随机数/">随机数</a><small>1</small></li>
+  
+    <li><a href="/tags/概率/">概率</a><small>1</small></li>
+  
+    <li><a href="/tags/求和/">求和</a><small>1</small></li>
+  
+    <li><a href="/tags/线程/">线程</a><small>1</small></li>
+  
+    <li><a href="/tags/K值/">K值</a><small>1</small></li>
+  
+    <li><a href="/tags/足球/">足球</a><small>1</small></li>
+  
+    <li><a href="/tags/视频/">视频</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+
+
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/K值/" style="font-size: 10.00px;">K值</a><a href="/tags/c/c++/" style="font-size: 10.00px;">c/c++</a><a href="/tags/const/" style="font-size: 10.00px;">const</a><a href="/tags/java/" style="font-size: 20.00px;">java</a><a href="/tags/二叉树/" style="font-size: 13.33px;">二叉树</a><a href="/tags/动态代理/" style="font-size: 13.33px;">动态代理</a><a href="/tags/哈希/" style="font-size: 10.00px;">哈希</a><a href="/tags/多线程/" style="font-size: 10.00px;">多线程</a><a href="/tags/归并排序/" style="font-size: 10.00px;">归并排序</a><a href="/tags/数组/" style="font-size: 16.67px;">数组</a><a href="/tags/概率/" style="font-size: 10.00px;">概率</a><a href="/tags/求和/" style="font-size: 10.00px;">求和</a><a href="/tags/算法/" style="font-size: 10.00px;">算法</a><a href="/tags/线程/" style="font-size: 10.00px;">线程</a><a href="/tags/视频/" style="font-size: 10.00px;">视频</a><a href="/tags/负载均衡/" style="font-size: 10.00px;">负载均衡</a><a href="/tags/足球/" style="font-size: 10.00px;">足球</a><a href="/tags/逆序对/" style="font-size: 10.00px;">逆序对</a><a href="/tags/逆波兰表达式/" style="font-size: 10.00px;">逆波兰表达式</a><a href="/tags/随机数/" style="font-size: 10.00px;">随机数</a>
+  </div>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2014 messi20133
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>
