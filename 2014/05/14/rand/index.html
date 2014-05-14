@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>const学习 | MESSI20133&#39;S BLOG</title>
+  <title>随机函数概率生成 | MESSI20133&#39;S BLOG</title>
   <meta name="author" content="messi20133">
   
   <meta name="description" content="">
@@ -11,7 +11,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="const学习"/>
+  <meta property="og:title" content="随机函数概率生成"/>
   <meta property="og:site_name" content="MESSI20133&#39;S BLOG"/>
 
   <link rel="alternate" href="/atom.xml" title="MESSI20133&#39;S BLOG" type="application/atom+xml">
@@ -57,49 +57,70 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2014-05-07T06:12:46.000Z"><a href="/2014/05/07/aboutconst/">5月 7 2014</a></time>
+        <time datetime="2014-05-14T03:38:32.000Z"><a href="/2014/05/14/rand/">5月 14 2014</a></time>
       
       
   
-    <h1 class="title">const学习</h1>
+    <h1 class="title">随机函数概率生成</h1>
   
 
     </header>
     <div class="entry">
       
-        <p><a id="more"></a><br>const修饰指针的情况一般分为如下四种：</p>
-<pre><code><span class="keyword">int</span>  b=<span class="number">500</span>;  
-<span class="keyword">const</span> <span class="keyword">int</span> * a=&amp;b;  <span class="comment">//情况1</span>
-<span class="keyword">int</span> <span class="keyword">const</span> *a=&amp;b;  <span class="comment">//情况2</span>
-<span class="keyword">int</span> * <span class="keyword">const</span> a=&amp;b;  <span class="comment">//情况3</span>
-<span class="keyword">const</span> <span class="keyword">int</span> * <span class="keyword">const</span> a=&amp;b;  <span class="comment">//情况4</span>
-</code></pre><p>当const位于星号左侧，则const就是用来修饰指针所指向的变量，即，指针指向的为常量，<br>当const位于星号右侧，则const就是用来修饰指针本身，即，指针本身为常量</p>
-<p>对于情况1</p>
-<pre><code><span class="keyword">int</span> b=<span class="number">500</span>;
-<span class="keyword">const</span> <span class="keyword">int</span> *a=&amp;b;
-*a=<span class="number">600</span>;<span class="comment">//错误</span>
-</code></pre><p>也有别的办法修改*a的值，一种方法是通过改变b的值来改变a的值</p>
-<pre><code><span class="keyword">int</span> b=<span class="number">500</span>;
-<span class="keyword">const</span> <span class="keyword">int</span> *a=&amp;b;
-b=<span class="number">600</span>;
-</code></pre><p>另一种办法就是将a指向别处</p>
-<pre><code><span class="keyword">int</span> b=<span class="number">500</span>，c=<span class="number">600</span>;
-<span class="keyword">const</span> <span class="keyword">int</span> *a=&amp;b;
-a=&amp;c;
-</code></pre><p><strong>对于情况1，可以先不进行初始化，因为虽然指针的内容是常量，但是指针不是常量。</strong><br>对于情况3，必须同时初始化</p>
-<pre><code><span class="keyword">int</span> b=<span class="number">500</span>,c=<span class="number">500</span>;
-<span class="keyword">int</span> * <span class="keyword">const</span> a;<span class="comment">//错误，没有初始化</span>
-<span class="keyword">int</span> * <span class="keyword">const</span> a=&amp;b <span class="comment">//正确</span>
-*a=<span class="number">600</span>; <span class="comment">//正确，允许修改值</span>
-a=&amp;c;<span class="comment">//错误，</span>
-</code></pre><p>对于情况4，指针本身和指针指向的内容均为常量。</p>
-<hr>
-<p><strong>const成员函数:</strong><br>只读函数，不能修改数据成员的值。</p>
-<hr>
-<p><strong>const与#define相比有什么不同？</strong><br>const常量有数据类型，而宏常量没有数据类型，编译器对前者进行类型安全检查，对后者只是进行字符替换，没有安全性检查。</p>
-<hr>
-<p><strong>如何在const函数中修改数据成员变量？</strong><br>在数据成员前面加上mutable</p>
+        <p><a id="more"></a><br>下面介绍与随机函数概率生成器相关的方法：<br>1.问题一：产生1-10之间的随机数</p>
+<pre><code><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">rand</span>(){
+    <span class="keyword">return</span> (<span class="keyword">int</span>)(Math.random()*<span class="number">10</span>+<span class="number">1</span>);
+}
+</code></pre><p>2.问题二：函数以30%的概率返回1,70%概率返回0，可以利用取余的方法，1-10中num%3==0的数只有3,6,9，占30%，所以可以根据这个来计算。</p>
+<pre><code><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">old_rand</span>(){
+    <span class="keyword">int</span> num=(<span class="keyword">int</span>)(Math.random()*<span class="number">10</span>+<span class="number">1</span>);
+    <span class="keyword">if</span>(num%<span class="number">3</span>==<span class="number">0</span>)
+        <span class="keyword">return</span> <span class="number">1</span>;
+    <span class="keyword">else</span>
+        <span class="keyword">return</span> <span class="number">0</span>;
+}
+</code></pre><p>3.问题三：根据上述函数等概率的产生0和1，如果有两个数，则组合为00,11,01,10<br>其中01,10,的概率是一样的，根据这条，可以产生等概率的0和1</p>
+<pre><code><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">new_rand</span>(){
+    <span class="keyword">int</span> num1=old_rand();
+    <span class="keyword">int</span> num2=old_rand();
+    <span class="keyword">if</span>(num1==<span class="number">0</span>&amp;&amp;num2==<span class="number">1</span>)
+        <span class="keyword">return</span> <span class="number">1</span>;
+    <span class="keyword">else</span> <span class="keyword">if</span>(num1==<span class="number">1</span>&amp;&amp;num2==<span class="number">0</span>)
+        <span class="keyword">return</span> <span class="number">0</span>;
+    <span class="keyword">else</span>
+        <span class="keyword">return</span> new_rand();
+}
+</code></pre><p>4.来产生指定范围内的等概率的随机数，这里采用“组合法+丢弃法”<br>组合法就是针对每一位进行组合，丢弃法就是当产生的随机数大于指定的范围，则丢弃，递归计算。</p>
+<pre><code><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">any_range_rand</span>(<span class="keyword">int</span> range){
+    <span class="keyword">int</span> bit=<span class="number">0</span>;
+    <span class="keyword">int</span> result=<span class="number">0</span>;
+    <span class="keyword">int</span> tempRange=range;
+    <span class="keyword">while</span>(tempRange!=<span class="number">0</span>){
+        bit++;
+        tempRange=tempRange/<span class="number">10</span>;
+    }
+    <span class="keyword">while</span>(bit!=<span class="number">0</span>){
+        result+=result*<span class="number">10</span>+rand();
+        bit--;
+    }
+    <span class="keyword">if</span>(result&gt;range){
+        <span class="keyword">return</span> any_range_rand(range);
+    }<span class="keyword">else</span>
+        <span class="keyword">return</span> result;
+}
+</code></pre><p>5.指定一个函数rand5(),用来产生1-5之间的随机数，用该函数实现一个rand7(),来产生1-7之间的随机数，要求等概率。<br>思路：rand5()产生的数字可以看成是五进制，产生两位，这样1-25的范围就是等概率的，然后针对1-21范围内的数据余7就可以以等概率产生1-7之间的数。</p>
+<pre><code><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">rand5</span>(){
+    <span class="keyword">return</span> any_range_rand(<span class="number">5</span>);
+}
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">rand7</span>(){
+    <span class="keyword">int</span> temp=<span class="number">5</span>*(rand5()-<span class="number">1</span>)+rand5();
+    <span class="keyword">while</span>(temp&gt;<span class="number">21</span>){
+        temp=<span class="number">5</span>*(rand5()-<span class="number">1</span>)+rand5();
+    }
+    <span class="keyword">return</span> temp%<span class="number">7</span>;
 
+}
+</code></pre>
       
     </div>
     <footer>
@@ -107,13 +128,13 @@ a=&amp;c;<span class="comment">//错误，</span>
         
   
   <div class="categories">
-    <a href="/categories/C/C++/">C/C++</a>
+    <a href="/categories/随机概率/">随机概率</a>
   </div>
 
         
   
   <div class="tags">
-    <a href="/tags/c/c++/">c/c++</a>, <a href="/tags/const/">const</a>
+    <a href="/tags/随机数/">随机数</a>, <a href="/tags/概率/">概率</a>
   </div>
 
         <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone"></a><a href="#" class="bds_tsina" data-cmd="tsina"></a><a href="#" class="bds_tqq" data-cmd="tqq"></a><a href="#" class="bds_renren" data-cmd="renren"></a><a href="#" class="bds_weixin" data-cmd="weixin"></a></div>
@@ -128,7 +149,7 @@ a=&amp;c;<span class="comment">//错误，</span>
 
 <section id="comment">
   <!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="2014/05/07/aboutconst/"></div>
+	<div class="ds-thread" data-thread-key="2014/05/14/rand/"></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
