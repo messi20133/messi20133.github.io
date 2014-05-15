@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>将一个整数nSum分解成num个整数和的形式，如nSum=6，num=3那么，nSum就可以分解成为1 1 4；1 2 3；222。 | MESSI20133&#39;S BLOG</title>
+  <title>能取得最大收益的时间安排 | MESSI20133&#39;S BLOG</title>
   <meta name="author" content="messi20133">
   
   <meta name="description" content="">
@@ -11,7 +11,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="将一个整数nSum分解成num个整数和的形式，如nSum=6，num=3那么，nSum就可以分解成为1 1 4；1 2 3；222。"/>
+  <meta property="og:title" content="能取得最大收益的时间安排"/>
   <meta property="og:site_name" content="MESSI20133&#39;S BLOG"/>
 
   <link rel="alternate" href="/atom.xml" title="MESSI20133&#39;S BLOG" type="application/atom+xml">
@@ -57,48 +57,71 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2014-05-08T13:14:19.000Z"><a href="/2014/05/08/interview1/">5月 8 2014</a></time>
+        <time datetime="2014-05-15T07:31:20.000Z"><a href="/2014/05/15/projectarrange/">5月 15 2014</a></time>
       
       
   
-    <h1 class="title">将一个整数nSum分解成num个整数和的形式，如nSum=6，num=3那么，nSum就可以分解成为1 1 4；1 2 3；222。</h1>
+    <h1 class="title">能取得最大收益的时间安排</h1>
   
 
     </header>
     <div class="entry">
       
-        <p><a id="more"></a><br><strong>如题：将一个整数nSum分解成num个整数和的形式，如nSum=6，num=3那么，nSum就可以分解成为1 1 4；1 2 3；222。请编程实现！</strong></p>
-<p>分析：采用递归的算法，分解时，层次（nDepth，基于0）每深一层，其层所对应的值就应该不比上一层的值小，所以循环体中变量i应从上一层的值开始，直到nSum/num时截止，因为最后一组最大情况应都为nSum/num。其中nDepth+num的值为总的分解个数。</p>
-<p>代码如下：</p>
-<pre><code>package PermutationsAndcombinations;
-<span class="comment">/*
- * 将一个整数nSum分解成num个整数和的形式，如nSum=6，num=3那么，nSum就        可以分解成为1 1 4；1 2 3；222。
- */</span>
-<span class="keyword">public</span> <span class="keyword">class</span> SpiteNum {
-<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">SegNum</span>(<span class="keyword">int</span> nSum,<span class="keyword">int</span> num,<span class="keyword">int</span> pData[],<span class="keyword">int</span> pDepth){
-    <span class="keyword">if</span>(<span class="number">1</span>==num){
-        <span class="comment">//当num=1的时候输出pData中的值，</span>
-        pData[pDepth]=nSum;  <span class="comment">//别忘了把nSum加上</span>
-        <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;num+pDepth;j++){
-            System.<span class="keyword">out</span>.print(pData[j]+<span class="string">" "</span>);
-        }
-        System.<span class="keyword">out</span>.println();
-    }<span class="keyword">else</span>{
-        <span class="keyword">int</span> i=(pDepth==<span class="number">0</span>?<span class="number">1</span>:pData[pDepth-<span class="number">1</span>]);
-        <span class="keyword">for</span>(;i&lt;=nSum/num;i++){
-            pData[pDepth++]=i; 
-            SegNum(nSum-i, num-<span class="number">1</span>, pData, pDepth); <span class="comment">//开始深的一层</span>
-            pDepth--;
-        }
+        <p><a id="more"></a><br>问题描述：小明每天都在开源社区上做项目，假设每天他都有很多项目可以选，其中每个项目都有一个开始时间和截止时间，假设做完每个项目后，拿到报酬都是不同的。由于小明马上就要硕士毕业了，面临着买房、买车、给女友买各种包包的鸭梨，但是他的钱包却空空如也，他需要足够的money来充实钱包。万能的网友麻烦你来帮帮小明，如何在最短时间内安排自己手中的项目才能保证赚钱最多（注意：做项目的时候，项目不能并行，即两个项目之间不能有时间重叠，但是一个项目刚结束，就可以立即做另一个项目，即项目起止时间点可以重叠）。<br>输入：<br>输入可能包含多个测试样例。<br>对于每个测试案例，输入的第一行是一个整数n(1&lt;=n&lt;=10000)：代表小明手中的项目个数。<br>接下来共有n行，每行有3个整数st、ed、val，分别表示项目的开始、截至时间和项目的报酬，相邻两数之间用空格隔开。<br>st、ed、value取值均在32位有符号整数（int）的范围内，输入数据保证所有数据的value总和也在int范围内。</p>
+<p>输出：<br>对应每个测试案例，输出小明可以获得的最大报酬。<br>代码如下：</p>
+<pre><code>package StringAndArray;
+import java.util.Arrays;
+import java.util.Comparator;
+<span class="keyword">public</span> <span class="keyword">class</span> ProjectArrangement {
+<span class="keyword">static</span> class Task{
+    <span class="keyword">public</span> <span class="keyword">int</span> st;
+    <span class="keyword">public</span> <span class="keyword">int</span> ed;
+    <span class="keyword">public</span> <span class="keyword">int</span> <span class="keyword">value</span>;
+    <span class="keyword">public</span> <span class="title">Task</span>(<span class="keyword">int</span> st,<span class="keyword">int</span> ed,<span class="keyword">int</span> <span class="keyword">value</span>){
+        <span class="keyword">this</span>.st=st;
+        <span class="keyword">this</span>.ed=ed;
+        <span class="keyword">this</span>.<span class="keyword">value</span>=<span class="keyword">value</span>;
+    }
+    @Override
+    <span class="keyword">public</span> String <span class="title">toString</span>() {
+        <span class="comment">// TODO Auto-generated method stub</span>
+        <span class="keyword">return</span> String.valueOf(ed);
     }
 }
-<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) {
-    <span class="comment">//测试代码</span>
-    <span class="keyword">int</span> nSum=<span class="number">10</span>;
-    <span class="keyword">int</span> num=<span class="number">3</span>;
-    <span class="keyword">int</span>[] pData=<span class="keyword">new</span> <span class="keyword">int</span>[num];
-    SegNum(nSum,num,pData,<span class="number">0</span>);
+<span class="keyword">static</span> class Cmp implements Comparator&lt;Task&gt;{
+    @Override
+    <span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compare</span>(Task o1, Task o2) {
+        <span class="comment">// TODO Auto-generated method stub</span>
+        <span class="keyword">return</span> o1.ed&gt;=o2.ed?<span class="number">1</span>:-<span class="number">1</span>;
     }
+}
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">getMaxValue</span>(Task[] tasks){
+    <span class="keyword">int</span>[] result=<span class="keyword">new</span> <span class="keyword">int</span>[tasks.length+<span class="number">1</span>];<span class="comment">//安排前i个项目，得到的最大值为result[i]</span>
+    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;tasks.length;i++){
+        <span class="keyword">int</span> j=i-<span class="number">1</span>;
+        <span class="keyword">for</span>(;j&gt;=<span class="number">0</span>;j--){
+            <span class="keyword">if</span>(tasks[i].st&gt;tasks[j].ed)
+                <span class="keyword">break</span>;
+        }
+        result[i+<span class="number">1</span>]=result[j+<span class="number">1</span>]+tasks[i].<span class="keyword">value</span>;
+        <span class="keyword">if</span>(result[i+<span class="number">1</span>]&lt;result[i]){
+            result[i+<span class="number">1</span>]=result[i];
+        }
+    }
+    System.<span class="keyword">out</span>.println(result[tasks.length]);
+
+}
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) {
+    Task[] tasks=<span class="keyword">new</span> Task[<span class="number">3</span>];
+    Task t1=<span class="keyword">new</span> Task(<span class="number">1</span>,<span class="number">3</span>,<span class="number">6</span>);
+    Task t2=<span class="keyword">new</span> Task(<span class="number">4</span>,<span class="number">8</span>,<span class="number">9</span>);
+    Task t3=<span class="keyword">new</span> Task(<span class="number">2</span>,<span class="number">5</span>,<span class="number">16</span>);
+    tasks[<span class="number">0</span>]=t1;
+    tasks[<span class="number">1</span>]=t2;
+    tasks[<span class="number">2</span>]=t3;
+    Arrays.sort(tasks,<span class="keyword">new</span> Cmp());<span class="comment">//按照结束时间排序</span>
+    getMaxValue(tasks);
+}
 }
 </code></pre>
       
@@ -108,13 +131,13 @@
         
   
   <div class="categories">
-    <a href="/categories/java学习/">java学习</a>, <a href="/categories/java学习/算法/">算法</a>
+    <a href="/categories/算法/">算法</a>
   </div>
 
         
   
   <div class="tags">
-    <a href="/tags/java/">java</a>, <a href="/tags/算法/">算法</a>
+    <a href="/tags/动态规划/">动态规划</a>
   </div>
 
         <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone"></a><a href="#" class="bds_tsina" data-cmd="tsina"></a><a href="#" class="bds_tqq" data-cmd="tqq"></a><a href="#" class="bds_renren" data-cmd="renren"></a><a href="#" class="bds_weixin" data-cmd="weixin"></a></div>
@@ -129,7 +152,7 @@
 
 <section id="comment">
   <!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="2014/05/08/interview1/"></div>
+	<div class="ds-thread" data-thread-key="2014/05/15/projectarrange/"></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
