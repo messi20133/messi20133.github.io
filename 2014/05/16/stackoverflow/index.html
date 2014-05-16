@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>逆波兰表达式 | MESSI20133&#39;S BLOG</title>
+  <title>浅谈StackOverflowError和OutOfMemoryError | MESSI20133&#39;S BLOG</title>
   <meta name="author" content="messi20133">
   
   <meta name="description" content="">
@@ -11,7 +11,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="逆波兰表达式"/>
+  <meta property="og:title" content="浅谈StackOverflowError和OutOfMemoryError"/>
   <meta property="og:site_name" content="MESSI20133&#39;S BLOG"/>
 
   <link rel="alternate" href="/atom.xml" title="MESSI20133&#39;S BLOG" type="application/atom+xml">
@@ -57,61 +57,18 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2014-05-09T03:09:21.000Z"><a href="/2014/05/09/nibolan/">5月 9 2014</a></time>
+        <time datetime="2014-05-16T02:00:38.000Z"><a href="/2014/05/16/stackoverflow/">5月 16 2014</a></time>
       
       
   
-    <h1 class="title">逆波兰表达式</h1>
+    <h1 class="title">浅谈StackOverflowError和OutOfMemoryError</h1>
   
 
     </header>
     <div class="entry">
       
-        <p><a id="more"></a><br>逆波兰表达式是一种十分有用的表达式，它将复杂表达式转换为可以依靠简单的操作得到计算结果的表达式。例如(a+b)<em>(c+d)转换为ab+cd+</em><br>它的优势在于只用两种简单操作，入栈和出栈就可以搞定任何普通表达式的运算。其运算方式如下：<br>如果当前字符为变量或者为数字，则压栈，如果是运算符，则将栈顶两个元素弹出作相应运算，结果再入栈，最后当表达式扫描完后，栈里的就是结果。</p>
-<p>用程序实现如下：</p>
-<pre><code>package StringAndArray;
-import java.util.Stack;
+        <p><a id="more"></a><br>1、栈溢出：<br>每当java程序启动一个新的线程时，java虚拟机会为他分配一个栈，java栈以帧为单位保持线程运行状态；<br>当线程调用一个方法是，jvm压入一个新的栈帧到这个线程的栈中，只要这个方法还没返回，这个栈帧就<br>存在，如果方法的嵌套调用层次太多(如递归调用),随着java栈中的帧的增多，最终导致这个线程的栈中的<br>所有栈帧的大小的总和大于-Xss设置的值，而产生生StackOverflowError溢出异常；<br>2、内存溢出：<br>2.1、栈内存溢出<br>java程序启动一个新线程时，没有足够的空间为改线程分配java栈，一个线程java栈的大小由-Xss设置决定；<br>JVM则抛出OutOfMemoryError异常；<br>2.2、堆内存溢出<br>java堆用于存放对象的实例，当需要为对象的实例分配内存时，而堆的占用已经达到了设置的最大值(通过-Xmx)设置最大值，则抛出OutOfMemoryError异常<br>2.3、方法区内存溢出<br>方法区用于存放java类的相关信息，如类名、访问修饰符、常量池、字段描述、方法描述等；在类加载器加载<br>class文件到内存中的时候，JVM会提取其中的类信息，并将这些类信息放到方法区中。当需要存储这些类信息，而方法区的内存占用又已经达到最大值（通过-XX:MaxPermSize）；将会抛出OutOfMemoryError异常<br>对于这种情况的测试，基本的思路是运行时产生大量的类去填满方法区，直到溢出。<br>这里需要借助CGLib直接操作字节码运行时，生成了大量的动态类</p>
 
-<span class="comment">//计算逆波兰表达式：例如：["2", "1", "+", "3", "*"] -&gt; ((2 +     1) * 3) -&gt; 9 </span>
-<span class="comment">//                ["4", "13", "5", "/", "+"] -&gt; (4 + (13 / 5)) -&gt; 6</span>
-<span class="keyword">public</span> <span class="keyword">class</span> ReversePolishNotation {
-<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">evalRPN</span>(String tokens[]){
-    String operators=<span class="string">"+-*/"</span>;
-    Stack&lt;String&gt; stack=<span class="keyword">new</span> Stack&lt;String&gt;();
-    <span class="keyword">for</span>(String t:tokens){
-        <span class="keyword">if</span>(!operators.contains(t)){
-            stack.push(t);
-        }<span class="keyword">else</span>{
-            <span class="keyword">int</span> num1=Integer.valueOf(stack.pop());
-            <span class="keyword">int</span> num2=Integer.valueOf(stack.pop());
-            <span class="comment">//注意一下操作数都是num2在前，num1在后面</span>
-            <span class="keyword">switch</span>(t){
-                <span class="keyword">case</span> <span class="string">"+"</span>:
-                    stack.push(String.valueOf((num2+num1)));
-                    <span class="keyword">break</span>;
-                <span class="keyword">case</span> <span class="string">"-"</span>:
-                    stack.push(String.valueOf((num2-num1)));
-                    <span class="keyword">break</span>;
-                <span class="keyword">case</span> <span class="string">"*"</span>:
-                    stack.push(String.valueOf((num2*num1)));
-                    <span class="keyword">break</span>;
-                <span class="keyword">case</span> <span class="string">"/"</span>:
-                    stack.push(String.valueOf((num2/num1)));
-                    <span class="keyword">break</span>;
-            }
-
-        }
-    }
-    <span class="keyword">int</span> returnvalue=Integer.valueOf(stack.pop());
-    <span class="keyword">return</span> returnvalue;
-}
-<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) {
-    String[] tokens={<span class="string">"2"</span>, <span class="string">"1"</span>, <span class="string">"+"</span>, <span class="string">"3"</span>, <span class="string">"*"</span>};
-    <span class="keyword">int</span> <span class="keyword">value</span>=evalRPN(tokens);
-    System.<span class="keyword">out</span>.println(<span class="keyword">value</span>);
-}
-}
-</code></pre>
       
     </div>
     <footer>
@@ -119,13 +76,13 @@ import java.util.Stack;
         
   
   <div class="categories">
-    <a href="/categories/java学习/">java学习</a>, <a href="/categories/java学习/算法/">算法</a>
+    <a href="/categories/java学习/">java学习</a>
   </div>
 
         
   
   <div class="tags">
-    <a href="/tags/java/">java</a>, <a href="/tags/动态代理/">动态代理</a>, <a href="/tags/逆波兰表达式/">逆波兰表达式</a>
+    <a href="/tags/java/">java</a>
   </div>
 
         <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone"></a><a href="#" class="bds_tsina" data-cmd="tsina"></a><a href="#" class="bds_tqq" data-cmd="tqq"></a><a href="#" class="bds_renren" data-cmd="renren"></a><a href="#" class="bds_weixin" data-cmd="weixin"></a></div>
@@ -140,7 +97,7 @@ import java.util.Stack;
 
 <section id="comment">
   <!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="2014/05/09/nibolan/"></div>
+	<div class="ds-thread" data-thread-key="2014/05/16/stackoverflow/"></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
