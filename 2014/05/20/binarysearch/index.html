@@ -1,0 +1,349 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>无处不在的二分查找 | MESSI20133&#39;S BLOG</title>
+  <meta name="author" content="messi20133">
+  
+  <meta name="description" content="">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="无处不在的二分查找"/>
+  <meta property="og:site_name" content="MESSI20133&#39;S BLOG"/>
+
+  <link rel="alternate" href="/atom.xml" title="MESSI20133&#39;S BLOG" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">MESSI20133&#39;S BLOG</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">首页</a></li>
+    
+      <li><a href="/archives">文档</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+    <div class="gallery">
+  <div class="photoset">
+    
+      <img src="">
+    
+  </div>
+  <div class="control">
+    <div class="prev"></div>
+    <div class="next"></div>
+  </div>
+</div>
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-05-20T07:11:26.000Z"><a href="/2014/05/20/binarysearch/">5月 20 2014</a></time>
+      
+      
+  
+    <h1 class="title">无处不在的二分查找</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p><a id="more"></a><br>这篇文章介绍二分查找，以及其变形（，Floor,数组中重复数的个数、旋转数组求最小值）</p>
+<p><strong>二分查找</strong><br>二分查找又称折半查找，优点是比较次数少，查找速度快，平均性能好；其缺点是要求待查表为有序表，且插入删除困难。因此，折半查找方法适用于不经常变动而查找频繁的有序列表。首先，假设表中元素是按升序排列，将表中间位置记录的关键字与查找关键字比较，如果两者相等，则查找成功；否则利用中间位置记录将表分成前、后两个子表，如果中间位置记录的关键字大于查找关键字，则进一步查找前一子表，否则进一步查找后一子表。重复以上过程，直到找到满足条件的记录，使查找成功，或直到子表不存在为止，此时查找不成功。<br>代码如下：</p>
+<pre><code><span class="keyword">public</span> static <span class="built_in">int</span> BinarySearch1(<span class="built_in">int</span> num[],<span class="built_in">int</span> l,<span class="built_in">int</span> r, <span class="built_in">int</span> key){
+    <span class="keyword">while</span>(l&lt;=r){
+        <span class="built_in">int</span> <span class="built_in">mid</span>=l+(r-l)/<span class="number">2</span>;
+        <span class="keyword">if</span>(num[<span class="built_in">mid</span>]&gt;key)
+            r=<span class="built_in">mid</span>-<span class="number">1</span>;
+        <span class="keyword">else</span> <span class="keyword">if</span>(num[<span class="built_in">mid</span>]&lt;key)
+            l=<span class="built_in">mid</span>+<span class="number">1</span>;
+        <span class="keyword">else</span> 
+            return num[<span class="built_in">mid</span>];
+    }
+    return -<span class="number">1</span>;
+}
+</code></pre><p>理论上，我们最多需要 logN+1 次比较。仔细观察，我们在每次迭代中使用两次比较，除了最后比较成功的一次。实际应用上，比较也是代价高昂的操作，往往不是简单的数据类型的比较。减少比较的次数也是优化的方向之一。</p>
+<pre><code><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">BinarySearch2</span>(<span class="keyword">int</span> num[], <span class="keyword">int</span> l,<span class="keyword">int</span> r,<span class="keyword">int</span> key){
+    <span class="keyword">while</span>(r-l&gt;<span class="number">1</span>){
+        <span class="keyword">int</span> mid=l+(r-l)/<span class="number">2</span>;
+        <span class="keyword">if</span>(num[mid]&lt;=key)
+            l=mid;
+        <span class="keyword">else</span>
+            r=mid;
+    }
+    <span class="keyword">if</span>(num[l]==key)
+        <span class="keyword">return</span> num[l];
+    <span class="keyword">else</span> 
+        <span class="keyword">return</span> -<span class="number">1</span>;
+}
+</code></pre><p>在while循环中，我们仅依赖于一次比较。搜索空间( l-&gt;r )不断缩小，我们需要一个比较跟踪搜索状态。<br>需要注意的，要保证我们恒等式（A[l] &lt;= key &amp; A[r] &gt; key）正确，后面还会用到恒等式。</p>
+<hr>
+<hr>
+<p><strong>Floor问题</strong><br>给一个有N个互不相同的元素的已排序数组，返回小于或等于给定key的最大元素。 例如输入为 A = {-1, 2, 3, 5, 6, 8, 9, 10}   key = 7,应该返回6.<br>我们可以用上面的优化方案，还是保持一个恒等式，然后移动 左右两个指针。最终 left指针会指向 小于或等于给定key的最大元素(根据恒等式A[l] &lt;= key and A[r] &gt; key)。</p>
+<pre><code><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">Floor</span>(<span class="keyword">int</span> num[],<span class="keyword">int</span> l,<span class="keyword">int</span> r, <span class="keyword">int</span> key){
+    <span class="keyword">while</span>(r-l&gt;<span class="number">1</span>){
+        <span class="keyword">int</span> mid=l+(r-l)/<span class="number">2</span>;
+        <span class="keyword">if</span>(num[mid]&lt;=key)
+            l=mid;
+        <span class="keyword">else</span>
+            r=mid;    
+    }
+    <span class="keyword">return</span> num[l];
+}
+</code></pre><hr>
+<hr>
+<p><strong>问题三 数组中重复元素的个数</strong><br>给一个有重复元素的已排序数组，找出给定的元素key出现的次数，时间复杂度要求为logN.</p>
+<pre><code><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">GetRightPosition</span>(<span class="keyword">int</span> num[],<span class="keyword">int</span> l,<span class="keyword">int</span> r,<span class="keyword">int</span> key){
+    <span class="keyword">while</span>(r-l&gt;<span class="number">1</span>){
+        <span class="keyword">int</span> mid=l+(r-l)/<span class="number">2</span>;
+        <span class="keyword">if</span>(num[mid]&lt;=key)
+            l=mid;
+        <span class="keyword">else</span>
+            r=mid;
+    }
+    <span class="keyword">return</span> l;
+}
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">GetLeftPosition</span>(<span class="keyword">int</span> num[],<span class="keyword">int</span> l,<span class="keyword">int</span> r,<span class="keyword">int</span> key){
+    <span class="keyword">while</span>(r-l&gt;<span class="number">1</span>){
+        <span class="keyword">int</span> mid=l+(r-l)/<span class="number">2</span>;
+        <span class="keyword">if</span>(num[mid]&gt;=key)
+            r=mid;
+        <span class="keyword">else</span>
+            l=mid;
+    }
+    <span class="keyword">return</span> r;
+}
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">CountOccurances</span>(<span class="keyword">int</span> num[],<span class="keyword">int</span> key){
+    <span class="keyword">int</span> l=GetLeftPosition(num, <span class="number">0</span>, num.length, key);
+    <span class="keyword">int</span> r=GetRightPosition(num, <span class="number">0</span>, num.length, key);
+    System.<span class="keyword">out</span>.println(l+<span class="string">" "</span>+r);
+    <span class="keyword">if</span>(num[l]==key&amp;&amp;num[r]==key){
+        <span class="keyword">return</span> r-l+<span class="number">1</span>;
+    }
+    <span class="keyword">return</span> <span class="number">0</span>;
+}
+</code></pre><hr>
+<hr>
+<p><strong>问题4 求旋转数组中的最小值</strong><br>有一个已排序的数组（无相同元素）在未知的位置进行了旋转操作，找出在新数组中的最小元素所在的位置。</p>
+<p>例如：原数组 {1,2,3,4,5,6,7,8,9,10}， 旋转后的数组可能是 {6,7,8,9,10, 1,2,3,4,5 }，也可能是 {8,9,10,1,2,3,4,5,6,7 }</p>
+<p>分析：</p>
+<p>我们不断的缩小 l 左指针和 r 右指针直到有一个元素。把上面划横线的作为第一部分，剩下的为第二部分。如果中间位置m落在第一部分，即A[m] &lt; A[r] 不成立，我们排序掉区间 A[m+1 … r]。 如果中间位置m落在第二部分，即 A[m]&lt;A[r]成立，我们缩小区间至 A[m+1 …. r ]。 直到搜索的区间大小为1就结束。</p>
+<pre><code><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">BinarySearchIndexOfMinimumRotatedArray</span>(<span class="keyword">int</span> num[],<span class="keyword">int</span> l, <span class="keyword">int</span> r){
+    <span class="keyword">if</span>(num[l]&lt;num[r])
+        <span class="keyword">return</span> num[l];
+    <span class="keyword">while</span>(l&lt;=r){
+        <span class="keyword">if</span>(l==r)
+            <span class="keyword">return</span> num[l];
+        <span class="keyword">int</span> mid=l+(r-l)/<span class="number">2</span>;
+        <span class="keyword">if</span>(num[mid]&lt;=num[r])
+            r=mid;
+        <span class="keyword">else</span>
+            l=mid+<span class="number">1</span>;
+    }
+    <span class="keyword">return</span> -<span class="number">1</span>;
+}
+</code></pre>
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/categories/算法/">算法</a>, <a href="/categories/算法/二分查找/">二分查找</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/tags/二分查找/">二分查找</a>
+  </div>
+
+        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone"></a><a href="#" class="bds_tsina" data-cmd="tsina"></a><a href="#" class="bds_tqq" data-cmd="tqq"></a><a href="#" class="bds_renren" data-cmd="renren"></a><a href="#" class="bds_weixin" data-cmd="weixin"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdPic":"","bdStyle":"0","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+<section id="comment">
+  <!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="2014/05/20/binarysearch/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"messi20133"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+<div class="search">
+  <form action="http://google.com/search" method="get" accept-charset="utf-8">
+    <input type="text" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+
+
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/C/C++/">C/C++</a><small>1</small></li>
+  
+    <li><a href="/categories/多线程/">多线程</a><small>1</small></li>
+  
+    <li><a href="/categories/算法/">算法</a><small>7</small></li>
+  
+    <li><a href="/categories/算法/二分查找/">二分查找</a><small>1</small></li>
+  
+    <li><a href="/categories/一致性哈希/">一致性哈希</a><small>1</small></li>
+  
+    <li><a href="/categories/算法/编辑距离/">编辑距离</a><small>1</small></li>
+  
+    <li><a href="/categories/java学习/">java学习</a><small>6</small></li>
+  
+    <li><a href="/categories/java学习/算法/">算法</a><small>3</small></li>
+  
+    <li><a href="/categories/算法/树/">树</a><small>1</small></li>
+  
+    <li><a href="/categories/算法/链表/">链表</a><small>1</small></li>
+  
+    <li><a href="/categories/排序/">排序</a><small>1</small></li>
+  
+    <li><a href="/categories/算法/排序/">排序</a><small>1</small></li>
+  
+    <li><a href="/categories/随机概率/">随机概率</a><small>1</small></li>
+  
+    <li><a href="/categories/二叉树/">二叉树</a><small>1</small></li>
+  
+    <li><a href="/categories/视频/">视频</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+
+
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/c/c++/">c/c++</a><small>1</small></li>
+  
+    <li><a href="/tags/const/">const</a><small>1</small></li>
+  
+    <li><a href="/tags/多线程/">多线程</a><small>1</small></li>
+  
+    <li><a href="/tags/二分查找/">二分查找</a><small>1</small></li>
+  
+    <li><a href="/tags/哈希/">哈希</a><small>1</small></li>
+  
+    <li><a href="/tags/负载均衡/">负载均衡</a><small>1</small></li>
+  
+    <li><a href="/tags/数组/">数组</a><small>3</small></li>
+  
+    <li><a href="/tags/编辑距离/">编辑距离</a><small>1</small></li>
+  
+    <li><a href="/tags/java/">java</a><small>5</small></li>
+  
+    <li><a href="/tags/算法/">算法</a><small>1</small></li>
+  
+    <li><a href="/tags/动态代理/">动态代理</a><small>2</small></li>
+  
+    <li><a href="/tags/二叉树/">二叉树</a><small>2</small></li>
+  
+    <li><a href="/tags/链表/">链表</a><small>1</small></li>
+  
+    <li><a href="/tags/归并排序/">归并排序</a><small>1</small></li>
+  
+    <li><a href="/tags/逆序对/">逆序对</a><small>1</small></li>
+  
+    <li><a href="/tags/逆波兰表达式/">逆波兰表达式</a><small>1</small></li>
+  
+    <li><a href="/tags/动态规划/">动态规划</a><small>1</small></li>
+  
+    <li><a href="/tags/排序/">排序</a><small>1</small></li>
+  
+    <li><a href="/tags/随机数/">随机数</a><small>1</small></li>
+  
+    <li><a href="/tags/概率/">概率</a><small>1</small></li>
+  
+    <li><a href="/tags/求和/">求和</a><small>1</small></li>
+  
+    <li><a href="/tags/线程/">线程</a><small>1</small></li>
+  
+    <li><a href="/tags/K值/">K值</a><small>1</small></li>
+  
+    <li><a href="/tags/足球/">足球</a><small>1</small></li>
+  
+    <li><a href="/tags/视频/">视频</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+
+
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/K值/" style="font-size: 10.00px;">K值</a><a href="/tags/c/c++/" style="font-size: 10.00px;">c/c++</a><a href="/tags/const/" style="font-size: 10.00px;">const</a><a href="/tags/java/" style="font-size: 20.00px;">java</a><a href="/tags/二分查找/" style="font-size: 10.00px;">二分查找</a><a href="/tags/二叉树/" style="font-size: 13.33px;">二叉树</a><a href="/tags/动态代理/" style="font-size: 13.33px;">动态代理</a><a href="/tags/动态规划/" style="font-size: 10.00px;">动态规划</a><a href="/tags/哈希/" style="font-size: 10.00px;">哈希</a><a href="/tags/多线程/" style="font-size: 10.00px;">多线程</a><a href="/tags/归并排序/" style="font-size: 10.00px;">归并排序</a><a href="/tags/排序/" style="font-size: 10.00px;">排序</a><a href="/tags/数组/" style="font-size: 16.67px;">数组</a><a href="/tags/概率/" style="font-size: 10.00px;">概率</a><a href="/tags/求和/" style="font-size: 10.00px;">求和</a><a href="/tags/算法/" style="font-size: 10.00px;">算法</a><a href="/tags/线程/" style="font-size: 10.00px;">线程</a><a href="/tags/编辑距离/" style="font-size: 10.00px;">编辑距离</a><a href="/tags/视频/" style="font-size: 10.00px;">视频</a><a href="/tags/负载均衡/" style="font-size: 10.00px;">负载均衡</a><a href="/tags/足球/" style="font-size: 10.00px;">足球</a><a href="/tags/逆序对/" style="font-size: 10.00px;">逆序对</a><a href="/tags/逆波兰表达式/" style="font-size: 10.00px;">逆波兰表达式</a><a href="/tags/链表/" style="font-size: 10.00px;">链表</a><a href="/tags/随机数/" style="font-size: 10.00px;">随机数</a>
+  </div>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2014 messi20133
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>
