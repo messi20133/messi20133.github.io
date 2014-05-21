@@ -1,0 +1,340 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>最短摘要的生成 | MESSI20133&#39;S BLOG</title>
+  <meta name="author" content="messi20133">
+  
+  <meta name="description" content="">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="最短摘要的生成"/>
+  <meta property="og:site_name" content="MESSI20133&#39;S BLOG"/>
+
+  <link rel="alternate" href="/atom.xml" title="MESSI20133&#39;S BLOG" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">MESSI20133&#39;S BLOG</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">首页</a></li>
+    
+      <li><a href="/archives">文档</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+    <div class="gallery">
+  <div class="photoset">
+    
+      <img src="">
+    
+  </div>
+  <div class="control">
+    <div class="prev"></div>
+    <div class="next"></div>
+  </div>
+</div>
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-05-21T09:08:57.000Z"><a href="/2014/05/21/extractsummary/">5月 21 2014</a></time>
+      
+      
+  
+    <h1 class="title">最短摘要的生成</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p><a id="more"></a><br>给定一段产品的英文描述，包含M个英文字母，每个英文单词以空格分隔，无其他标点符号；再给定N个英文单词关键字，请说明思路并编程实现方法String extractSummary(String description,String[] keywords)，目标是找出此产品描述中包含N个关键字（每个关键词至少出现一次）的长度最短的子串，作为产品简介输出。<br>这个问题和编程之美3.5的题目类似，就是在字符串description中找一段包含keywords数组中所有字符串关键字的字符串。<br>思路：利用两个索引分别指向我们最终生成的摘要的位置，接下来进行如下循环：（1）首先判断摘要中是否包含所有关键字，如果不全包括，则将遍历的尾标志向后加1，直到包含所有关键字都被包含或者尾标志超出范围。（2）接下来将遍历的首标志向后移动，并不断检查移动过程中摘要是否还是全部被包含，如果被全部包含，说明存在长度更小的摘要，这时需要更新最短摘要的长度及下标位置；如果再移动过程中发现不全部包含了，则继续（1）的操作，直到尾标志超出范围。<br>代码如下：</p>
+<pre><code>package StringAndArray;
+import java.util.HashMap;
+import java.util.Map;
+<span class="keyword">public</span> <span class="keyword">class</span> Abstract {
+<span class="keyword">private</span> <span class="keyword">int</span>[] keywordCount;
+    <span class="keyword">private</span> <span class="keyword">int</span> pstart,pend;
+    <span class="keyword">private</span> <span class="keyword">int</span> astart,aend;
+    <span class="keyword">private</span> <span class="keyword">int</span> abstractLength;
+    <span class="keyword">private</span> Map&lt;String,Integer&gt; map;
+    <span class="keyword">public</span> <span class="title">Abstract</span>(String[] keywords){
+        <span class="keyword">int</span> len=keywords.length;
+        keywordCount=<span class="keyword">new</span> <span class="keyword">int</span>[len];
+        map=keywordmap(keywords);
+    }
+
+<span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setKeywordsCount</span>(<span class="keyword">int</span> i,boolean flag){
+    <span class="keyword">if</span>(flag)
+        keywordCount[i]++;
+    <span class="keyword">else</span>
+        keywordCount[i]--;
+}
+<span class="keyword">public</span> boolean <span class="title">isAllExisted</span>(){
+    boolean flag=<span class="keyword">true</span>;
+    <span class="keyword">for</span>(<span class="keyword">int</span> count:keywordCount)
+        <span class="keyword">if</span>(count==<span class="number">0</span>){
+            flag=<span class="keyword">false</span>;
+            <span class="keyword">return</span> flag;
+        }
+    <span class="keyword">return</span> flag;
+
+}
+<span class="keyword">public</span> String <span class="title">extractSummary</span>(String source,String[] keyword){
+    String[] src=source.split(<span class="string">" "</span>);
+    <span class="keyword">return</span> extract(src, keyword);
+}
+<span class="keyword">public</span> String <span class="title">extract</span>(String[] source,String[] keyword){
+    <span class="keyword">int</span> len=source.length;
+    abstractLength=len+<span class="number">1</span>;
+    <span class="keyword">while</span>(<span class="keyword">true</span>){
+        <span class="keyword">while</span>(!isAllExisted()&amp;&amp;pend&lt;len){
+            <span class="keyword">if</span>(<span class="keyword">this</span>.map.<span class="keyword">get</span>(source[pend])!=<span class="keyword">null</span>)
+                setKeywordsCount(<span class="keyword">this</span>.map.<span class="keyword">get</span>(source[pend]),<span class="keyword">false</span>);
+            pend++;
+        }
+        <span class="keyword">while</span>(isAllExisted()){
+            <span class="keyword">if</span>(pend-pstart&lt;abstractLength){
+                abstractLength=pend-pstart;
+                aend=pend;
+                astart=pstart;
+            }
+            <span class="keyword">if</span>(map.<span class="keyword">get</span>(source[pstart])!=<span class="keyword">null</span>)
+                setKeywordsCount(<span class="keyword">this</span>.map.<span class="keyword">get</span>(source[pstart]), <span class="keyword">true</span>);
+            pstart++;
+        }
+        <span class="keyword">if</span>(pend&gt;=len)
+            <span class="keyword">break</span>;
+    }
+    StringBuilder sb=<span class="keyword">new</span> StringBuilder();
+    <span class="keyword">for</span>(<span class="keyword">int</span> i=astart;i&lt;aend;i++)
+        sb.append(source[i]+<span class="string">" "</span>);
+    <span class="keyword">return</span> sb.toString();
+}
+<span class="keyword">public</span> Map&lt;String,Integer&gt; <span class="title">keywordmap</span>(String[] keywords){
+    Map&lt;String,Integer&gt; map=<span class="keyword">new</span> HashMap&lt;String, Integer&gt;();
+    <span class="keyword">int</span> i=<span class="number">0</span>;
+    <span class="keyword">for</span>(String key:keywords)
+        map.put(key, i++);
+    <span class="keyword">return</span> map;
+}
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) {
+    String description=<span class="string">"hello sun software hello test flower world spring sun world flower hello"</span>; 
+    String[] keywords = {<span class="string">"sun"</span>,<span class="string">"flower"</span>}; 
+    Abstract nAbstract = <span class="keyword">new</span> Abstract(keywords);  
+    System.<span class="keyword">out</span>.println(nAbstract.extractSummary(description, keywords));
+}
+}
+</code></pre>
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/categories/算法/">算法</a>, <a href="/categories/算法/最短距离/">最短距离</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/tags/最短距离/">最短距离</a>
+  </div>
+
+        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone"></a><a href="#" class="bds_tsina" data-cmd="tsina"></a><a href="#" class="bds_tqq" data-cmd="tqq"></a><a href="#" class="bds_renren" data-cmd="renren"></a><a href="#" class="bds_weixin" data-cmd="weixin"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdPic":"","bdStyle":"0","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+<section id="comment">
+  <!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="2014/05/21/extractsummary/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"messi20133"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+<div class="search">
+  <form action="http://google.com/search" method="get" accept-charset="utf-8">
+    <input type="text" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+
+
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/C/C++/">C/C++</a><small>1</small></li>
+  
+    <li><a href="/categories/多线程/">多线程</a><small>1</small></li>
+  
+    <li><a href="/categories/算法/">算法</a><small>9</small></li>
+  
+    <li><a href="/categories/算法/二分查找/">二分查找</a><small>1</small></li>
+  
+    <li><a href="/categories/一致性哈希/">一致性哈希</a><small>1</small></li>
+  
+    <li><a href="/categories/算法/编辑距离/">编辑距离</a><small>1</small></li>
+  
+    <li><a href="/categories/java学习/">java学习</a><small>6</small></li>
+  
+    <li><a href="/categories/java学习/算法/">算法</a><small>3</small></li>
+  
+    <li><a href="/categories/算法/树/">树</a><small>1</small></li>
+  
+    <li><a href="/categories/算法/链表/">链表</a><small>1</small></li>
+  
+    <li><a href="/categories/排序/">排序</a><small>1</small></li>
+  
+    <li><a href="/categories/算法/排序/">排序</a><small>1</small></li>
+  
+    <li><a href="/categories/随机概率/">随机概率</a><small>1</small></li>
+  
+    <li><a href="/categories/二叉树/">二叉树</a><small>1</small></li>
+  
+    <li><a href="/categories/算法/全排列/">全排列</a><small>1</small></li>
+  
+    <li><a href="/categories/视频/">视频</a><small>1</small></li>
+  
+    <li><a href="/categories/算法/最短距离/">最短距离</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+
+
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/c/c++/">c/c++</a><small>1</small></li>
+  
+    <li><a href="/tags/const/">const</a><small>1</small></li>
+  
+    <li><a href="/tags/多线程/">多线程</a><small>1</small></li>
+  
+    <li><a href="/tags/二分查找/">二分查找</a><small>1</small></li>
+  
+    <li><a href="/tags/哈希/">哈希</a><small>1</small></li>
+  
+    <li><a href="/tags/负载均衡/">负载均衡</a><small>1</small></li>
+  
+    <li><a href="/tags/数组/">数组</a><small>3</small></li>
+  
+    <li><a href="/tags/编辑距离/">编辑距离</a><small>1</small></li>
+  
+    <li><a href="/tags/java/">java</a><small>5</small></li>
+  
+    <li><a href="/tags/算法/">算法</a><small>1</small></li>
+  
+    <li><a href="/tags/动态代理/">动态代理</a><small>2</small></li>
+  
+    <li><a href="/tags/二叉树/">二叉树</a><small>2</small></li>
+  
+    <li><a href="/tags/链表/">链表</a><small>1</small></li>
+  
+    <li><a href="/tags/归并排序/">归并排序</a><small>1</small></li>
+  
+    <li><a href="/tags/逆序对/">逆序对</a><small>1</small></li>
+  
+    <li><a href="/tags/逆波兰表达式/">逆波兰表达式</a><small>1</small></li>
+  
+    <li><a href="/tags/动态规划/">动态规划</a><small>1</small></li>
+  
+    <li><a href="/tags/排序/">排序</a><small>1</small></li>
+  
+    <li><a href="/tags/随机数/">随机数</a><small>1</small></li>
+  
+    <li><a href="/tags/概率/">概率</a><small>1</small></li>
+  
+    <li><a href="/tags/求和/">求和</a><small>1</small></li>
+  
+    <li><a href="/tags/线程/">线程</a><small>1</small></li>
+  
+    <li><a href="/tags/K值/">K值</a><small>1</small></li>
+  
+    <li><a href="/tags/全排列/">全排列</a><small>1</small></li>
+  
+    <li><a href="/tags/足球/">足球</a><small>1</small></li>
+  
+    <li><a href="/tags/视频/">视频</a><small>1</small></li>
+  
+    <li><a href="/tags/最短距离/">最短距离</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+
+
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/K值/" style="font-size: 10.00px;">K值</a><a href="/tags/c/c++/" style="font-size: 10.00px;">c/c++</a><a href="/tags/const/" style="font-size: 10.00px;">const</a><a href="/tags/java/" style="font-size: 20.00px;">java</a><a href="/tags/二分查找/" style="font-size: 10.00px;">二分查找</a><a href="/tags/二叉树/" style="font-size: 13.33px;">二叉树</a><a href="/tags/全排列/" style="font-size: 10.00px;">全排列</a><a href="/tags/动态代理/" style="font-size: 13.33px;">动态代理</a><a href="/tags/动态规划/" style="font-size: 10.00px;">动态规划</a><a href="/tags/哈希/" style="font-size: 10.00px;">哈希</a><a href="/tags/多线程/" style="font-size: 10.00px;">多线程</a><a href="/tags/归并排序/" style="font-size: 10.00px;">归并排序</a><a href="/tags/排序/" style="font-size: 10.00px;">排序</a><a href="/tags/数组/" style="font-size: 16.67px;">数组</a><a href="/tags/最短距离/" style="font-size: 10.00px;">最短距离</a><a href="/tags/概率/" style="font-size: 10.00px;">概率</a><a href="/tags/求和/" style="font-size: 10.00px;">求和</a><a href="/tags/算法/" style="font-size: 10.00px;">算法</a><a href="/tags/线程/" style="font-size: 10.00px;">线程</a><a href="/tags/编辑距离/" style="font-size: 10.00px;">编辑距离</a><a href="/tags/视频/" style="font-size: 10.00px;">视频</a><a href="/tags/负载均衡/" style="font-size: 10.00px;">负载均衡</a><a href="/tags/足球/" style="font-size: 10.00px;">足球</a><a href="/tags/逆序对/" style="font-size: 10.00px;">逆序对</a><a href="/tags/逆波兰表达式/" style="font-size: 10.00px;">逆波兰表达式</a><a href="/tags/链表/" style="font-size: 10.00px;">链表</a><a href="/tags/随机数/" style="font-size: 10.00px;">随机数</a>
+  </div>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2014 messi20133
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>
