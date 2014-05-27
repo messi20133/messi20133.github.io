@@ -3,13 +3,15 @@
 <head>
   <meta charset="utf-8">
   
-  <title>归档 | MESSI20133&#39;S BLOG</title>
+  <title>已知三个升序整数数组a[l],b[m]和c[n]。请在三个数组中各找一个元素，是的组成的三元组距离最小。三元组的距离定义是：假设a[i]、b[j]和c[k]是一个三元组，那么距离为:Distance = max(|a[ I ] – b[ j ]|, |a[ I ] – c[ k ]|, |b[ j ] – c[ k ]|)请设计一个求最小三元组距离的最优算法，并分析时间复杂度。 | MESSI20133&#39;S BLOG</title>
   <meta name="author" content="messi20133">
+  
+  <meta name="description" content="">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  
+  <meta property="og:title" content="已知三个升序整数数组a[l],b[m]和c[n]。请在三个数组中各找一个元素，是的组成的三元组距离最小。三元组的距离定义是：假设a[i]、b[j]和c[k]是一个三元组，那么距离为:Distance = max(|a[ I ] – b[ j ]|, |a[ I ] – c[ k ]|, |b[ j ] – c[ k ]|)请设计一个求最小三元组距离的最优算法，并分析时间复杂度。"/>
   <meta property="og:site_name" content="MESSI20133&#39;S BLOG"/>
 
   <link rel="alternate" href="/atom.xml" title="MESSI20133&#39;S BLOG" type="application/atom+xml">
@@ -37,12 +39,7 @@
 </nav>
 <div class="clearfix"></div></header>
   <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper">
-<h2 class="archive-title">归档</h2>
-
-
-  
-    <article class="post">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
   
     <div class="gallery">
   <div class="photoset">
@@ -64,23 +61,85 @@
       
       
   
-    <h1 class="title"><a href="/2014/05/27/mindistanceofthreearray/">已知三个升序整数数组a[l],b[m]和c[n]。请在三个数组中各找一个元素，是的组成的三元组距离最小。三元组的距离定义是：假设a[i]、b[j]和c[k]是一个三元组，那么距离为:Distance = max(|a[ I ] – b[ j ]|, |a[ I ] – c[ k ]|, |b[ j ] – c[ k ]|)请设计一个求最小三元组距离的最优算法，并分析时间复杂度。</a></h1>
+    <h1 class="title">已知三个升序整数数组a[l],b[m]和c[n]。请在三个数组中各找一个元素，是的组成的三元组距离最小。三元组的距离定义是：假设a[i]、b[j]和c[k]是一个三元组，那么距离为:Distance = max(|a[ I ] – b[ j ]|, |a[ I ] – c[ k ]|, |b[ j ] – c[ k ]|)请设计一个求最小三元组距离的最优算法，并分析时间复杂度。</h1>
   
 
     </header>
     <div class="entry">
       
-        <p>
+        <p><a id="more"></a><br><strong>分析</strong><br>　　首先我们要知道一个公式：max{|x1-x2|,|y1-y2|} =（|x1+y1-x2-y2|+|x1-y1-(x2-y2)|）/2   —公式（1）</p>
+<p>　　我们假设x1=a[ i ]，x2=b[ j ]，x3=c[ k ]，则<br>Distance = max(|x1 – x2|, |x1 – x3|, |x2 – x3|) = max(   max(|x1 – x2|, |x1 – x3|) , |x2 – x3|)   —公式（2）</p>
+<p>　　根据公式（1），max(|x1 – x2|, |x1 – x3|) = 1/2 ( |2x1 – x2– x3| +  |x2 – x3|)，带入公式（2），得到</p>
+<p>Distance = max( 1/2 ( |2x1 – x2– x3| +  |x2 – x3|) , |x2 – x3| )  </p>
+<p>　　　　　　=1/2 <em> max(  |2x1 – x2– x3|  , |x2 – x3| ) + 1/2</em>|x2 – x3| //把相同部分1/2*|x2 – x3|分离出来</p>
+<p>　　　　　　=1/2 <em> max(  |2x1 – (x2 + x3)|  , |x2 – x3| ) + 1/2</em>|x2 – x3|   //把(x2 + x3)看成一个整体，使用公式（1）</p>
+<p>　　　　　　=1/2 <em> 1/2 </em>((|2x1 – 2x2| + |2x1 – 2x3|) + 1/2*|x2 – x3|</p>
+<p>　　　　　　=1/2 <em>|x1 – x2| + 1/2 </em> |x1 – x3| + 1/2*|x2 – x3|</p>
+<p>　　　　　　=1/2 *(|x1 – x2| + |x1 – x3| + |x2 – x3|)<br>此时找到与之等价的公式。</p>
+<p>　　下一步：如何找到(|x1 – x2| + |x1 – x3| + |x2 – x3|) 的最小值，x1，x2，x3，分别是三个数组中的任意一个数<br>　　我们用三个指针分别指向a,b,c中最小的数，计算一次他们最大距离的Distance ，然后在移动三个数中较小的数组指针，再计算一次，每次移动一个，直到其中一个数组结束为止，复杂度为O(l+ m + n)<br>　　代码如下：
+　　</p>
+<pre><code>package StringAndArray;
+<span class="keyword">public</span> <span class="keyword">class</span> MinDistanceOfThreeArray {
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">minOfThree</span>(<span class="keyword">int</span> i,<span class="keyword">int</span> j,<span class="keyword">int</span> k){
+    <span class="keyword">int</span> min=i&gt;j?j:i;
+    <span class="keyword">return</span> min&gt;k?k:min;
+}
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">minDistance</span>(<span class="keyword">int</span> a[],<span class="keyword">int</span> b[],<span class="keyword">int</span> c[]){
+    <span class="keyword">int</span> l=a.length;
+    <span class="keyword">int</span> m=b.length;
+    <span class="keyword">int</span> n=c.length;
+    <span class="keyword">int</span> i=<span class="number">0</span>,j=<span class="number">0</span>,k=<span class="number">0</span>;
+    <span class="keyword">int</span> minSum=(Math.abs(a[<span class="number">0</span>]-b[<span class="number">0</span>])+Math.abs(a[<span class="number">0</span>]-c[<span class="number">0</span>])+Math.abs(b[<span class="number">0</span>]-c[<span class="number">0</span>]))/<span class="number">2</span>;
+    <span class="keyword">int</span> sum;
+    <span class="keyword">int</span> minOFABC;
+    <span class="keyword">for</span>(<span class="keyword">int</span> cnt=<span class="number">0</span>;cnt&lt;=l+m+n;cnt++){
+        sum=(Math.abs(a[i]-b[j])+Math.abs(a[i]-c[k])+Math.abs(b[j]-c[k]))/<span class="number">2</span>;
+        minSum=minSum&lt;sum?minSum:sum;
+        minOFABC=minOfThree(a[i], b[j], c[k]);
+        <span class="keyword">if</span>(minOFABC==a[i]){
+            i++;
+            <span class="keyword">if</span>(i==l)
+                <span class="keyword">break</span>;
+        }<span class="keyword">else</span> <span class="keyword">if</span>(minOFABC==b[j]){
+            j++;
+            <span class="keyword">if</span>(j==m)
+                <span class="keyword">break</span>;
+        }<span class="keyword">else</span> <span class="keyword">if</span>(minOFABC==c[k]){
+            k++;
+            <span class="keyword">if</span>(k==n)
+                <span class="keyword">break</span>;
+        }
+    }
+    System.<span class="keyword">out</span>.println(i+<span class="string">" "</span>+j+<span class="string">" "</span>+k+<span class="string">" "</span>+minSum);
+    <span class="keyword">return</span>     minSum;
+
+}
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) {
+    <span class="keyword">int</span>[] a={<span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>};
+    <span class="keyword">int</span>[] b={<span class="number">13</span>, <span class="number">14</span>, <span class="number">15</span>, <span class="number">17</span>};
+    <span class="keyword">int</span>[] c={<span class="number">19</span>, <span class="number">22</span>, <span class="number">24</span>, <span class="number">29</span>, <span class="number">32</span>, <span class="number">42</span>};
+    System.<span class="keyword">out</span>.println(minDistance(a,b,c));
+}
+}
+</code></pre>
       
     </div>
     <footer>
       
         
-          <div class="alignleft">
-            <a href="/2014/05/27/mindistanceofthreearray/#more" class="more-link">阅读全文</a>
-          </div>
+  
+  <div class="categories">
+    <a href="/categories/算法/">算法</a>
+  </div>
+
         
-        
+  
+  <div class="tags">
+    
+  </div>
+
+        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone"></a><a href="#" class="bds_tsina" data-cmd="tsina"></a><a href="#" class="bds_tqq" data-cmd="tqq"></a><a href="#" class="bds_renren" data-cmd="renren"></a><a href="#" class="bds_weixin" data-cmd="weixin"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdPic":"","bdStyle":"0","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
       
       <div class="clearfix"></div>
     </footer>
@@ -88,203 +147,26 @@
 </article>
 
 
-  
-    <article class="post">
-  
-    <div class="gallery">
-  <div class="photoset">
-    
-      <img src="">
-    
-  </div>
-  <div class="control">
-    <div class="prev"></div>
-    <div class="next"></div>
-  </div>
-</div>
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2014-05-26T09:57:44.000Z"><a href="/2014/05/26/minsunk/">5月 26 2014</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2014/05/26/minsunk/">求两个数组A,B的和的最小的K个值</a></h1>
-  
 
-    </header>
-    <div class="entry">
-      
-        <p>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2014/05/26/minsunk/#more" class="more-link">阅读全文</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
+<section id="comment">
+  <!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="2014/05/27/mindistanceofthreearray/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"messi20133"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+</section>
 
-
-  
-    <article class="post">
-  
-    <div class="gallery">
-  <div class="photoset">
-    
-      <img src="">
-    
-  </div>
-  <div class="control">
-    <div class="prev"></div>
-    <div class="next"></div>
-  </div>
-</div>
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2014-05-26T08:59:06.000Z"><a href="/2014/05/26/sqrt/">5月 26 2014</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2014/05/26/sqrt/">求一个正整数N的开方，要求不能用库函数sqrt()，结果的精度在0.001</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2014/05/26/sqrt/#more" class="more-link">阅读全文</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-  
-    <article class="post">
-  
-    <div class="gallery">
-  <div class="photoset">
-    
-      <img src="">
-    
-  </div>
-  <div class="control">
-    <div class="prev"></div>
-    <div class="next"></div>
-  </div>
-</div>
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2014-05-22T12:55:09.000Z"><a href="/2014/05/22/huiwen/">5月 22 2014</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2014/05/22/huiwen/">与回文相关的操作</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2014/05/22/huiwen/#more" class="more-link">阅读全文</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-  
-    <article class="post">
-  
-    <div class="gallery">
-  <div class="photoset">
-    
-      <img src="">
-    
-  </div>
-  <div class="control">
-    <div class="prev"></div>
-    <div class="next"></div>
-  </div>
-</div>
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2014-05-21T09:08:57.000Z"><a href="/2014/05/21/extractsummary/">5月 21 2014</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2014/05/21/extractsummary/">最短摘要的生成</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2014/05/21/extractsummary/#more" class="more-link">阅读全文</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-  
-
-  <nav id="pagination">
-  
-  
-    <a href="/archives/page/2/" class="alignright next">下一页</a>
-  
-  <div class="clearfix"></div>
-</nav>
 </div></div>
     <aside id="sidebar" class="alignright">
 <div class="search">
