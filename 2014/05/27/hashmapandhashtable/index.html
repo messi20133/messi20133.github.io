@@ -3,13 +3,15 @@
 <head>
   <meta charset="utf-8">
   
-  <title>全排列 | MESSI20133&#39;S BLOG</title>
+  <title>HashMap与Hashtable的区别 | MESSI20133&#39;S BLOG</title>
   <meta name="author" content="messi20133">
+  
+  <meta name="description" content="HashTable的应用非常广泛，HashMap是新框架中用来代替HashTable的类，也就是说建议使用HashMap，不要使用HashTable。可能你觉得HashTable很好用，为什么不用呢？这里简单分析他们的区别。1.HashTable的方法是同步的，HashMap未经同步，所以在多线程场">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  
+  <meta property="og:title" content="HashMap与Hashtable的区别"/>
   <meta property="og:site_name" content="MESSI20133&#39;S BLOG"/>
 
   <link rel="alternate" href="/atom.xml" title="MESSI20133&#39;S BLOG" type="application/atom+xml">
@@ -37,12 +39,7 @@
 </nav>
 <div class="clearfix"></div></header>
   <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper">
-<h2 class="archive-title tag">全排列</h2>
-
-
-  
-    <article class="post">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
   
     <div class="gallery">
   <div class="photoset">
@@ -60,27 +57,60 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2014-05-20T09:12:13.000Z"><a href="/2014/05/20/quanpailie/">5月 20 2014</a></time>
+        <time datetime="2014-05-27T08:55:46.000Z"><a href="/2014/05/27/hashmapandhashtable/">5月 27 2014</a></time>
       
       
   
-    <h1 class="title"><a href="/2014/05/20/quanpailie/">全排列的递归实现和非递归实现</a></h1>
+    <h1 class="title">HashMap与Hashtable的区别</h1>
   
 
     </header>
     <div class="entry">
       
-        <p>
+        <p>HashTable的应用非常广泛，HashMap是新框架中用来代替HashTable的类，也就是说建议使用HashMap，不要使用HashTable。可能你觉得HashTable很好用，为什么不用呢？这里简单分析他们的区别。<br>1.HashTable的方法是同步的，HashMap未经同步，所以在多线程场合要手动同步HashMap这个区别就像Vector和ArrayList一样。</p>
+<p>2.HashTable不允许null值(key和value都不可以),HashMap允许null值(key和value都可以)。</p>
+<p>3.HashTable有一个contains(Object value)，功能和HashMap的containsValue(Object value)功能一样。</p>
+<p>4.HashTable使用Enumeration，HashMap使用Iterator。</p>
+<p>以上只是表面的不同，它们的实现也有很大的不同。<br>5.HashTable中hash数组默认大小是11，增加的方式是 old*2+1。HashMap中hash数组的默认大小是16，而且一定是2的指数。</p>
+<p>6.哈希值的使用不同，HashTable直接使用对象的hashCode，代码是这样的：</p>
+<pre><code><span class="keyword">int</span> hash = key.hashCode();
+<span class="keyword">int</span> <span class="keyword">index</span> = (hash &amp; <span class="number">0x7FFFFFFF</span>) % tab.<span class="keyword">length</span>;
+</code></pre><p>而HashMap重新计算hash值，而且用与代替求模：</p>
+<pre><code><span class="keyword">int</span> hash = hash(k);
+<span class="keyword">int</span> i = indexFor(hash, table.<span class="built_in">length</span>);
+
+static <span class="keyword">int</span> hash(Object x) {
+    　　<span class="keyword">int</span> h = x.hashCode();
+
+    　　h += ~(h &lt;&lt; <span class="number">9</span>);
+    　　h ^= (h &gt;&gt;&gt; <span class="number">14</span>);
+    　　h += (h &lt;&lt; <span class="number">4</span>);
+    　　h ^= (h &gt;&gt;&gt; <span class="number">10</span>);
+    　　<span class="keyword">return</span> h;
+    }
+
+static <span class="keyword">int</span> indexFor(<span class="keyword">int</span> h, <span class="keyword">int</span> <span class="built_in">length</span>) {
+    　　<span class="keyword">return</span> h &amp; (<span class="built_in">length</span>-<span class="number">1</span>);
+    }
+</code></pre>
       
     </div>
     <footer>
       
         
-          <div class="alignleft">
-            <a href="/2014/05/20/quanpailie/#more" class="more-link">阅读全文</a>
-          </div>
+  
+  <div class="categories">
+    
+  </div>
+
         
-        
+  
+  <div class="tags">
+    
+  </div>
+
+        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone"></a><a href="#" class="bds_tsina" data-cmd="tsina"></a><a href="#" class="bds_tqq" data-cmd="tqq"></a><a href="#" class="bds_renren" data-cmd="renren"></a><a href="#" class="bds_weixin" data-cmd="weixin"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdPic":"","bdStyle":"0","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
       
       <div class="clearfix"></div>
     </footer>
@@ -88,13 +118,26 @@
 </article>
 
 
-  
 
-  <nav id="pagination">
-  
-  
-  <div class="clearfix"></div>
-</nav>
+<section id="comment">
+  <!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="2014/05/27/hashmapandhashtable/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"messi20133"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+</section>
+
 </div></div>
     <aside id="sidebar" class="alignright">
 <div class="search">
