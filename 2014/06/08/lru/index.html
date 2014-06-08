@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>给定数组a[N]构造数组b [N] | MESSI20133&#39;S BLOG</title>
+  <title>LRUCache最近最少使用算法 | MESSI20133&#39;S BLOG</title>
   <meta name="author" content="messi20133">
   
   <meta name="description" content="">
@@ -11,7 +11,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="给定数组a[N]构造数组b [N]"/>
+  <meta property="og:title" content="LRUCache最近最少使用算法"/>
   <meta property="og:site_name" content="MESSI20133&#39;S BLOG"/>
 
   <link rel="alternate" href="/atom.xml" title="MESSI20133&#39;S BLOG" type="application/atom+xml">
@@ -57,40 +57,118 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2014-05-12T02:15:10.000Z"><a href="/2014/05/12/createarrayb/">5月 12 2014</a></time>
+        <time datetime="2014-06-08T13:54:52.000Z"><a href="/2014/06/08/lru/">6月 8 2014</a></time>
       
       
   
-    <h1 class="title">给定数组a[N]构造数组b [N]</h1>
+    <h1 class="title">LRUCache最近最少使用算法</h1>
   
 
     </header>
     <div class="entry">
       
-        <p><a id="more"></a><br>题目：给定一个数组a[N]，我们希望构造数组b [N]，其中b[j]=a[0]*a[1]…a[N-1] / a[j]，在构造过程中，不允许使用除法：要求O（1）空间复杂度和O（n）的时间复杂度；除遍历计数器与a[N] b[N]外，不可使用新的变量（包括栈临时变量、堆空间和全局静态变量等）</p>
-<p>分析：<br>设 b[0]=1;<br>令b[i]=b[i-1]a[i-1]<br>所以：<br>b[1]=a[0]<br>b[2]=b[1]a[1]=a[0]a[1];<br>.<br>.<br>.<br>b[i]=a[0]*….a[i-1]<br>通过b[0]这个变量来迭代出1, a[n-1], a[n-2]a[n-1], a[n-3]a[n-2]a[n-1], … , a[1]a[2]a[3]…a[n-1]，迭代过程中分别乘以b[n-1], b[n-2], … , b[0]</p>
-<p>代码如下：</p>
-<pre><code>package StringAndArray;
+        <p><a id="more"></a><br>LRU是Least Recently Used 近期最少使用算法。<br>内存管理的一种页面置换算法，对于在内存中但又不用的数据块（内存块）叫做LRU，Oracle会根据哪些数据属于LRU而将其移出内存而腾出空间来加载另外的数据。<br>关于操作系统的内存管理，如何节省利用容量不大的内存为最多的进程提供资源，一直是研究的重要方向。而内存的虚拟存储管理，是现在最通用，最成功的方式—— 在内存有限的情况下，扩展一部分外存作为虚拟内存，真正的内存只存储当前运行时所用得到信息。这无疑极大地扩充了内存的功能，极大地提高了计算机的并发度。虚拟页式存储管理，则是将进程所需空间划分为多个页面，内存中只存放当前所需页面，其余页面放入外存的管理方式。<br>然而，有利就有弊，虚拟页式存储管理减少了进程所需的内存空间，却也带来了运行时间变长这一缺点：进程运行过程中，不可避免地要把在外存中存放的一些信息和内存中已有的进行交换，由于外存的低速，这一步骤所花费的时间不可忽略。因而，采取尽量好的算法以减少读取外存的次数，也是相当有意义的事情。<br><strong>例子</strong><br>LRU（least recently used）最少使用。<br>假设 序列为 4 3 4 2 3 1 4 2<br>物理块有3个 则<br>首轮 4调入内存 4<br>次轮 3调入内存 3 4<br>之后 4调入内存 4 3<br>之后 2调入内存 2 4 3<br>之后 3调入内存 3 2 4<br>之后 1调入内存 1 3 2（因为最少使用的是4，所以丢弃4）<br>之后 4调入内存 4 1 3（原理同上）<br>最后 2调入内存 2 4 1<br>代码如下</p>
+<pre><code>package LinkList;
 
-import java.util.Arrays;
+import java.security.acl.LastOwnerException;
+import java.util.HashMap;
 
-<span class="keyword">public</span> <span class="keyword">class</span> CreareArrayB {
-<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Translate</span>(<span class="keyword">int</span> A[],<span class="keyword">int</span> B[]){
-    <span class="keyword">int</span> n=A.length;
-    B[<span class="number">0</span>]=<span class="number">1</span>;
-    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;n;i++)
-        B[i]=B[i-<span class="number">1</span>]*A[i-<span class="number">1</span>];
-    <span class="keyword">for</span>(<span class="keyword">int</span> i=n-<span class="number">1</span>;i&gt;=<span class="number">1</span>;i--){
-        B[i]=B[i]*B[<span class="number">0</span>];
-        B[<span class="number">0</span>]=B[<span class="number">0</span>]*A[i];
+class DoubleLinkedListNode{
+<span class="keyword">public</span> <span class="keyword">int</span> key;
+<span class="keyword">public</span> <span class="keyword">int</span> <span class="keyword">value</span>;
+<span class="keyword">public</span> DoubleLinkedListNode pre;
+<span class="keyword">public</span> DoubleLinkedListNode next;
+<span class="keyword">public</span> <span class="title">DoubleLinkedListNode</span>(<span class="keyword">int</span> key,<span class="keyword">int</span> <span class="keyword">value</span>){
+    <span class="keyword">this</span>.key=key;
+    <span class="keyword">this</span>.<span class="keyword">value</span>=<span class="keyword">value</span>;
+}
+}
+<span class="keyword">public</span> <span class="keyword">class</span> LRUCache {
+<span class="keyword">public</span> HashMap&lt;Integer, DoubleLinkedListNode&gt; map=<span class="keyword">new</span> HashMap&lt;Integer,DoubleLinkedListNode&gt;();
+<span class="keyword">public</span> DoubleLinkedListNode head;
+<span class="keyword">public</span> DoubleLinkedListNode end;
+<span class="keyword">public</span> <span class="keyword">int</span> capacity;
+<span class="keyword">public</span> <span class="keyword">int</span> len;
+<span class="keyword">public</span> <span class="title">LRUCache</span>(<span class="keyword">int</span> capacity){
+    <span class="keyword">this</span>.capacity=capacity;
+    len=<span class="number">0</span>;
+}
+<span class="keyword">public</span> <span class="keyword">int</span> <span class="title">get</span>(<span class="keyword">int</span> key){
+    <span class="keyword">if</span>(map.containsKey(key)){
+        DoubleLinkedListNode latest=map.<span class="keyword">get</span>(key);
+        removeNode(latest);
+        setHead(latest);
+        <span class="keyword">return</span> latest.<span class="keyword">value</span>;
+    }<span class="keyword">else</span>
+        <span class="keyword">return</span> -<span class="number">1</span>;        
+}
+<span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span>(<span class="keyword">int</span> key,<span class="keyword">int</span> <span class="keyword">value</span>){
+    <span class="keyword">if</span>(map.containsKey(key)){
+        DoubleLinkedListNode node =map.<span class="keyword">get</span>(key);
+        node.<span class="keyword">value</span>=<span class="keyword">value</span>;
+        removeNode(node);
+        setHead(node);
+    }<span class="keyword">else</span>{
+        DoubleLinkedListNode node =<span class="keyword">new</span> DoubleLinkedListNode(key, <span class="keyword">value</span>);
+        <span class="keyword">if</span>(len&lt;capacity){
+            setHead(node);
+            map.put(key, node);
+            len++;
+        }<span class="keyword">else</span>{
+            map.remove(end.key);
+            end=end.pre;
+            <span class="keyword">if</span>(end!=<span class="keyword">null</span>)
+                end.next=<span class="keyword">null</span>;
+            setHead(node);
+            map.put(key, node);
+        }
     }
 }
+<span class="keyword">public</span> <span class="keyword">void</span> <span class="title">removeNode</span>(DoubleLinkedListNode node){
+    DoubleLinkedListNode cur=node;
+    DoubleLinkedListNode pre=cur.pre;
+    DoubleLinkedListNode next=cur.next;
+    <span class="keyword">if</span>(pre!=<span class="keyword">null</span>){
+        pre.next=next;
+    }<span class="keyword">else</span>{
+        head=next;
+    }
+    <span class="keyword">if</span>(next!=<span class="keyword">null</span>){
+        next.pre=pre;
+    }<span class="keyword">else</span>{
+        end=pre;
+    }
+}
+<span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setHead</span>(DoubleLinkedListNode node){
+    node.next=head;
+    node.pre=<span class="keyword">null</span>;
+    <span class="keyword">if</span>(head!=<span class="keyword">null</span>){
+        head.pre=node;
+    }
+    head=node;
+    <span class="keyword">if</span>(end==<span class="keyword">null</span>)
+        end=node;
+}
+<span class="keyword">public</span> <span class="keyword">void</span> <span class="title">showList</span>(){
+    DoubleLinkedListNode cur=head;
+    <span class="keyword">if</span>(head==<span class="keyword">null</span>)
+        <span class="keyword">return</span>;
+    <span class="keyword">while</span>(cur!=<span class="keyword">null</span>){
+        System.<span class="keyword">out</span>.print(cur.<span class="keyword">value</span>+<span class="string">"-&gt;"</span>);
+        cur=cur.next;
+    }
+    System.<span class="keyword">out</span>.println();
+}
 <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) {
-    <span class="keyword">int</span>[] A={<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>};
-    <span class="keyword">int</span>[] B=<span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">4</span>];
-    Translate(A,B);
-    System.<span class="keyword">out</span>.println(Arrays.toString(A));
-    System.<span class="keyword">out</span>.println(Arrays.toString(B));
+    LRUCache lru=<span class="keyword">new</span> LRUCache(<span class="number">5</span>);
+    lru.<span class="keyword">set</span>(<span class="number">1</span>, <span class="number">1</span>);
+    lru.<span class="keyword">set</span>(<span class="number">2</span>, <span class="number">2</span>);
+    lru.<span class="keyword">set</span>(<span class="number">3</span>, <span class="number">3</span>);
+    lru.<span class="keyword">set</span>(<span class="number">4</span>, <span class="number">4</span>);
+    lru.<span class="keyword">set</span>(<span class="number">5</span>, <span class="number">5</span>);
+    lru.<span class="keyword">set</span>(<span class="number">7</span>, <span class="number">7</span>);
+    lru.<span class="keyword">set</span>(<span class="number">8</span>, <span class="number">8</span>);
+    lru.showList();
 }
 }
 </code></pre>
@@ -101,13 +179,13 @@ import java.util.Arrays;
         
   
   <div class="categories">
-    <a href="/categories/算法/">算法</a>
+    <a href="/categories/算法/">算法</a>, <a href="/categories/算法/排序/">排序</a>
   </div>
 
         
   
   <div class="tags">
-    <a href="/tags/数组/">数组</a>
+    <a href="/tags/排序/">排序</a>
   </div>
 
         <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone"></a><a href="#" class="bds_tsina" data-cmd="tsina"></a><a href="#" class="bds_tqq" data-cmd="tqq"></a><a href="#" class="bds_renren" data-cmd="renren"></a><a href="#" class="bds_weixin" data-cmd="weixin"></a></div>
@@ -122,7 +200,7 @@ import java.util.Arrays;
 
 <section id="comment">
   <!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="2014/05/12/createarrayb/"></div>
+	<div class="ds-thread" data-thread-key="2014/06/08/lru/"></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
