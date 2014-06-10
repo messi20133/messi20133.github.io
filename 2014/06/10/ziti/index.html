@@ -3,13 +3,15 @@
 <head>
   <meta charset="utf-8">
   
-  <title>树 | MESSI20133&#39;S BLOG</title>
+  <title>字梯问题 | MESSI20133&#39;S BLOG</title>
   <meta name="author" content="messi20133">
+  
+  <meta name="description" content="">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  
+  <meta property="og:title" content="字梯问题"/>
   <meta property="og:site_name" content="MESSI20133&#39;S BLOG"/>
 
   <link rel="alternate" href="/atom.xml" title="MESSI20133&#39;S BLOG" type="application/atom+xml">
@@ -37,12 +39,7 @@
 </nav>
 <div class="clearfix"></div></header>
   <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper">
-<h2 class="archive-title category">树</h2>
-
-
-  
-    <article class="post">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
   
     <div class="gallery">
   <div class="photoset">
@@ -60,27 +57,84 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2014-05-12T08:19:11.000Z"><a href="/2014/05/12/isbst/">5月 12 2014</a></time>
+        <time datetime="2014-06-10T13:24:29.000Z"><a href="/2014/06/10/ziti/">6月 10 2014</a></time>
       
       
   
-    <h1 class="title"><a href="/2014/05/12/isbst/">判断一个数字序列是BST后序遍历的结果</a></h1>
+    <h1 class="title">字梯问题</h1>
   
 
     </header>
     <div class="entry">
       
-        <p>
+        <p><a id="more"></a><br>字梯问题：给出两个单词（A，B）和一个字典，找出从A到B根据字典变换的最近距离。<br>例如：<br>A = “hit”<br>B = “cog”<br>dict = [“hot”,”dot”,”dog”,”lot”,”log”]<br>最短的变换距离就是 “hit” -&gt; “hot” -&gt; “dot” -&gt; “dog” -&gt; “cog”,<br>返回长度 5.<br>要求：1. 如果没有这么的序列则返回0<br>     2.字典中所有的单词都必须长度相同</p>
+<pre><code> 3. 字典中的所有单词必须只包含字母
+</code></pre><p>  思路：使用两个队列，一个是字符串队列，一个是数字队列，每次从字符串队列的弹出一个字符串，计算这个字符串只变换一个字母的结果并且这个结果存在在字典中，将符合条件的字符串保存到队列中，如果队列为空，还没找到结束字符串则不存在。<br>  代码如下：</p>
+<pre><code>package LinkList;
+import java.util.HashSet;
+import java.util.LinkedList;
+<span class="keyword">public</span> <span class="keyword">class</span> LadderLength {
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">ladderLength</span>(String start,String end,HashSet&lt;String&gt; dict){
+    <span class="keyword">if</span>(dict.size()==<span class="number">0</span>)
+        <span class="keyword">return</span> <span class="number">0</span>;
+    LinkedList&lt;String&gt; wordQueue=<span class="keyword">new</span> LinkedList&lt;String&gt;();
+    LinkedList&lt;Integer&gt; distanceQueue=<span class="keyword">new</span> LinkedList&lt;Integer&gt;();
+    wordQueue.add(start);
+    distanceQueue.add(<span class="number">1</span>);
+    <span class="keyword">while</span>(!wordQueue.isEmpty()){
+        String currWord=wordQueue.pop();
+        <span class="keyword">int</span> distance=distanceQueue.pop();
+        <span class="keyword">if</span>(currWord.equals(end)){
+            <span class="keyword">return</span> distance;
+        }
+        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;currWord.length();i++){
+            <span class="keyword">char</span>[] currCharArray=currWord.toCharArray(); 
+            <span class="keyword">for</span>(<span class="keyword">char</span> c=<span class="string">'a'</span>;c&lt;=<span class="string">'z'</span>;c++){
+                currCharArray[i]=c;
+                String temp=<span class="keyword">new</span> String(currCharArray);
+                <span class="keyword">if</span>(dict.contains(temp)){
+                    wordQueue.add(temp);
+                    distanceQueue.add(distance+<span class="number">1</span>);
+                    dict.remove(temp);
+                    System.<span class="keyword">out</span>.print(temp+<span class="string">"-&gt;"</span>);
+                }
+            }
+        }
+    }
+     <span class="keyword">return</span> <span class="number">0</span>;
+}
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) {
+    String start=<span class="string">"hit"</span>;
+    String end=<span class="string">"cog"</span>;
+    HashSet&lt;String&gt; dict=<span class="keyword">new</span> HashSet&lt;String&gt;();
+    dict.add(<span class="string">"hot"</span>);
+    dict.add(<span class="string">"dot"</span>);
+    dict.add(<span class="string">"dog"</span>);
+    dict.add(<span class="string">"lot"</span>);
+    dict.add(<span class="string">"log"</span>);
+    dict.add(end);
+    System.<span class="keyword">out</span>.println(ladderLength(start,end,dict));
+}
+}
+</code></pre>
       
     </div>
     <footer>
       
         
-          <div class="alignleft">
-            <a href="/2014/05/12/isbst/#more" class="more-link">阅读全文</a>
-          </div>
+  
+  <div class="categories">
+    <a href="/categories/二叉树/">二叉树</a>
+  </div>
+
         
-        
+  
+  <div class="tags">
+    <a href="/tags/二叉树/">二叉树</a>
+  </div>
+
+        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone"></a><a href="#" class="bds_tsina" data-cmd="tsina"></a><a href="#" class="bds_tqq" data-cmd="tqq"></a><a href="#" class="bds_renren" data-cmd="renren"></a><a href="#" class="bds_weixin" data-cmd="weixin"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdPic":"","bdStyle":"0","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
       
       <div class="clearfix"></div>
     </footer>
@@ -88,13 +142,26 @@
 </article>
 
 
-  
 
-  <nav id="pagination">
-  
-  
-  <div class="clearfix"></div>
-</nav>
+<section id="comment">
+  <!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="2014/06/10/ziti/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"messi20133"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+</section>
+
 </div></div>
     <aside id="sidebar" class="alignright">
 <div class="search">
