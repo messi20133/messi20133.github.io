@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>给一个二叉树，每个节点都是正或负整数，如何找到一个子树，它所有节点的和最大值 | MESSI20133&#39;S BLOG</title>
+  <title>将二叉树变成链表 | MESSI20133&#39;S BLOG</title>
   <meta name="author" content="messi20133">
   
   <meta name="description" content="">
@@ -11,7 +11,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="给一个二叉树，每个节点都是正或负整数，如何找到一个子树，它所有节点的和最大值"/>
+  <meta property="og:title" content="将二叉树变成链表"/>
   <meta property="og:site_name" content="MESSI20133&#39;S BLOG"/>
 
   <link rel="alternate" href="/atom.xml" title="MESSI20133&#39;S BLOG" type="application/atom+xml">
@@ -57,58 +57,60 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2014-05-13T06:25:25.000Z"><a href="/2014/05/13/sumtree/">5月 13 2014</a></time>
+        <time datetime="2014-06-11T08:37:15.000Z"><a href="/2014/06/11/treetolinklist/">6月 11 2014</a></time>
       
       
   
-    <h1 class="title">给一个二叉树，每个节点都是正或负整数，如何找到一个子树，它所有节点的和最大值</h1>
+    <h1 class="title">将二叉树变成链表</h1>
   
 
     </header>
     <div class="entry">
       
-        <p><a id="more"></a><br>可以根据二叉树的后序遍历，从下往上依次求出每个子树的和，将和写在该子树的父节点上，然后求出所有子树中的最大值。<br>代码如下：</p>
+        <p><a id="more"></a><br>将二叉树变成链表<br>二叉树如图所示<br>        1<br>        / \<br>       2   5<br>      / \   \<br>     3   4   6<br>要改成1-2-3-4-5-6（也就是前序遍历）<br>思路：<br>从根节点一直走左子树，如果右子树不为空，则将右子树放入栈中。<br>代码如下：</p>
 <pre><code>package Tree;
-<span class="comment">/*
-* 给一个二叉树，每个节点都是正或负整数，如何找到一个子树，它所    有节点的和最大
-*/</span>
-class Node{
-<span class="keyword">int</span> <span class="keyword">value</span>;
-Node left;
-Node right;
-<span class="keyword">public</span> <span class="title">Node</span>(<span class="keyword">int</span> i){
-    <span class="keyword">this</span>.<span class="keyword">value</span>=i;
+import java.util.LinkedList;
+import java.util.Stack;
+<span class="keyword">public</span> <span class="keyword">class</span> FlattenTree {
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">flatten</span>(Node root){
+    Stack&lt;Node&gt; stack=<span class="keyword">new</span> Stack&lt;Node&gt;();
+    Node p=root;
+    <span class="keyword">while</span>(p!=<span class="keyword">null</span>||!stack.empty()){
+        <span class="keyword">if</span>(p.right!=<span class="keyword">null</span>)
+            stack.push(p.right);
+        <span class="keyword">if</span>(p.left!=<span class="keyword">null</span>){
+            p.right=p.left;
+            p.left=<span class="keyword">null</span>;
+        }<span class="keyword">else</span> <span class="keyword">if</span>(!stack.empty()){
+            Node temp=stack.pop();
+            p.right=temp;
+        }
+        p=p.right;
+    }
 }
-}
-<span class="keyword">public</span> <span class="keyword">class</span> MaxSumOfChildren {
-<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> result= Integer.MIN_VALUE;
-<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">postOrder</span>(Node root){
-    <span class="keyword">if</span>(root==<span class="keyword">null</span>)
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">showList</span>(Node root){
+    <span class="keyword">if</span>(root==<span class="keyword">null</span>){
         <span class="keyword">return</span>;
-    <span class="keyword">if</span>(root.left!=<span class="keyword">null</span>){
-        postOrder(root.left);
-        root.<span class="keyword">value</span>+=root.left.<span class="keyword">value</span>;
     }
-    <span class="keyword">if</span>(root.right!=<span class="keyword">null</span>){
-        postOrder(root.right);
-        root.<span class="keyword">value</span>+=root.right.<span class="keyword">value</span>;
+    Node p=root;
+    <span class="keyword">while</span>(p!=<span class="keyword">null</span>){
+        System.<span class="keyword">out</span>.print(p.<span class="keyword">value</span>+<span class="string">"-&gt;"</span>);
+        p=p.right;
     }
-    <span class="keyword">if</span>(root.<span class="keyword">value</span>&gt;result)
-        result=root.<span class="keyword">value</span>;
+    System.<span class="keyword">out</span>.println();        
 }
 <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(String[] args) {
-    <span class="comment">//测试代码</span>
-    Node n1=<span class="keyword">new</span> Node(<span class="number">1</span>);
+    Node root=<span class="keyword">new</span> Node(<span class="number">1</span>);
     Node n2=<span class="keyword">new</span> Node(<span class="number">2</span>);
     Node n3=<span class="keyword">new</span> Node(<span class="number">3</span>);
     Node n4=<span class="keyword">new</span> Node(<span class="number">4</span>);
-    Node root=<span class="keyword">new</span> Node(<span class="number">0</span>);
-    root.left=n1;
-    root.right=n2;
-    n1.left=n3;
-    n1.right=n4;
-    postOrder(root);
-    System.<span class="keyword">out</span>.println(result);
+    Node n5=<span class="keyword">new</span> Node(<span class="number">5</span>);
+    root.left=n2;
+    root.right=n5;
+    n2.left=n3;
+    n2.right=n4;
+    flatten(root);
+    showList(root);
 
 }
 }
@@ -126,7 +128,7 @@ Node right;
         
   
   <div class="tags">
-    <a href="/tags/二叉树/">二叉树</a>, <a href="/tags/求和/">求和</a>
+    <a href="/tags/二叉树/">二叉树</a>
   </div>
 
         <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone"></a><a href="#" class="bds_tsina" data-cmd="tsina"></a><a href="#" class="bds_tqq" data-cmd="tqq"></a><a href="#" class="bds_renren" data-cmd="renren"></a><a href="#" class="bds_weixin" data-cmd="weixin"></a></div>
@@ -141,7 +143,7 @@ Node right;
 
 <section id="comment">
   <!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="2014/05/13/sumtree/"></div>
+	<div class="ds-thread" data-thread-key="2014/06/11/treetolinklist/"></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
