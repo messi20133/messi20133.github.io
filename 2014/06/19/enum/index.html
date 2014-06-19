@@ -3,13 +3,15 @@
 <head>
   <meta charset="utf-8">
   
-  <title>算法 | MESSI20133&#39;S BLOG</title>
+  <title>JAVA的枚举类enum | MESSI20133&#39;S BLOG</title>
   <meta name="author" content="messi20133">
+  
+  <meta name="description" content="">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  
+  <meta property="og:title" content="JAVA的枚举类enum"/>
   <meta property="og:site_name" content="MESSI20133&#39;S BLOG"/>
 
   <link rel="alternate" href="/atom.xml" title="MESSI20133&#39;S BLOG" type="application/atom+xml">
@@ -37,12 +39,7 @@
 </nav>
 <div class="clearfix"></div></header>
   <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper">
-<h2 class="archive-title tag">算法</h2>
-
-
-  
-    <article class="post">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
   
     <div class="gallery">
   <div class="photoset">
@@ -60,27 +57,83 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2014-05-08T13:14:19.000Z"><a href="/2014/05/08/interview1/">5月 8 2014</a></time>
+        <time datetime="2014-06-19T08:39:02.000Z"><a href="/2014/06/19/enum/">6月 19 2014</a></time>
       
       
   
-    <h1 class="title"><a href="/2014/05/08/interview1/">将一个整数nSum分解成num个整数和的形式，如nSum=6，num=3那么，nSum就可以分解成为1 1 4；1 2 3；222。</a></h1>
+    <h1 class="title">JAVA的枚举类enum</h1>
   
 
     </header>
     <div class="entry">
       
-        <p>
+        <p><a id="more"></a><br>Java 中的枚举类型采用关键字enum 来定义，从jdk1.5才有的新类型，所有的枚举类型都是继承自Enum 类型。要了解枚举类型，建议大家先打开jdk 中的Enum 类简单读一下，这个类里面定义了很多protected 方法，比如构造函数，如果要使用这些方法我们可以把枚举类型定义到当前类中。每个枚举类型，都有自己的名字和顺序，当我们输出一个枚举类型的时候，会输入枚举类型的name<br><strong>一 枚举类型定义常量方法</strong></p>
+<pre><code><span class="keyword">public</span> <span class="keyword">enum</span> Light{
+    RED,GREEN,YELLOW;
+}
+</code></pre><p>枚举类型增加构造方法，然后每个枚举类型的值通过构造函数传入对应的参数，同时覆写toString 方法，在该方法中返回从构造函数中传入的参数，改造后的代码如下：</p>
+<pre><code><span class="keyword">public</span> <span class="keyword">enum</span> Light2{
+    RED(<span class="number">1</span>),GREEN(<span class="number">3</span>),YELLOW(<span class="number">2</span>);
+    <span class="keyword">public</span> <span class="keyword">int</span> _code;
+    <span class="keyword">private</span> <span class="title">Light2</span>(<span class="keyword">int</span> code){
+        <span class="keyword">this</span>._code=code;
+    }
+    <span class="keyword">public</span> String <span class="title">toString</span>(){
+        <span class="keyword">return</span> String.valueOf(_code);
+    }
+}
+</code></pre><p><strong>二 枚举类型的遍历</strong></p>
+<pre><code><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testTraversalEnum</span>(){
+    Light2[] lights=Light2.values();
+    <span class="keyword">for</span>(Light2 light :lights){
+        System.<span class="keyword">out</span>.println(<span class="string">"当前的name:"</span>+light.name());
+        System.<span class="keyword">out</span>.println(<span class="string">"当前的ordinal:"</span>+light.ordinal());
+        System.<span class="keyword">out</span>.println(<span class="string">"当前灯:"</span>+light);
+    }
+}
+</code></pre><p><strong>三 EnumMap 的使用</strong><br>EnumMap 跟 HashMap 的使用差不多，只不过 key 要是枚举类型， EnumMap 对象的构造函数需要参数传入 , 默认是 key 的类的类型。</p>
+<pre><code>public static void testEnumMap(){
+    EnumMap&lt;Light2, String&gt; maps=new EnumMap&lt;Light2,String&gt;(Light2<span class="preprocessor">.class</span>)<span class="comment">;</span>
+    maps<span class="preprocessor">.put</span>(Light2<span class="preprocessor">.RED</span>, <span class="string">"红灯"</span>)<span class="comment">;</span>
+    maps<span class="preprocessor">.put</span>(Light2<span class="preprocessor">.GREEN</span>, <span class="string">"绿灯"</span>)<span class="comment">;</span>
+    maps<span class="preprocessor">.put</span>(Light2<span class="preprocessor">.YELLOW</span>, <span class="string">"黄灯"</span>)<span class="comment">;</span>
+    for(Light2 light:Light2<span class="preprocessor">.values</span>()){
+        System<span class="preprocessor">.out</span><span class="preprocessor">.println</span>(<span class="string">"key:"</span>+light<span class="preprocessor">.name</span>()+<span class="string">" value:"</span>+maps<span class="preprocessor">.get</span>(light))<span class="comment">;</span>
+    }
+}
+</code></pre><p><strong>四 EnumSet 的使用</strong><br>EnumSet 是一个抽象类，获取一个类型的枚举类型内容，使用 allOf 方法</p>
+<pre><code><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testEnumSet</span>(){
+    EnumSet&lt;Light2&gt; enums=EnumSet.allOf(Light2.class);
+    <span class="keyword">for</span>(Light2 light:enums){
+        System.<span class="keyword">out</span>.println(light.name());
+    }
+}
+</code></pre><p><strong>注意：</strong></p>
+<ol>
+<li>enum没有public的构造函数</li>
+<li>enum提供了values()方法，用来返回所有的枚举值</li>
+<li>enum提供了ordinal()方法，用来返回枚举值的顺序</li>
+<li>枚举的所有值都是public  static  final 的</li>
+</ol>
+
       
     </div>
     <footer>
       
         
-          <div class="alignleft">
-            <a href="/2014/05/08/interview1/#more" class="more-link">阅读全文</a>
-          </div>
+  
+  <div class="categories">
+    <a href="/categories/java学习/">java学习</a>
+  </div>
+
         
-        
+  
+  <div class="tags">
+    <a href="/tags/java学习/">java学习</a>
+  </div>
+
+        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone"></a><a href="#" class="bds_tsina" data-cmd="tsina"></a><a href="#" class="bds_tqq" data-cmd="tqq"></a><a href="#" class="bds_renren" data-cmd="renren"></a><a href="#" class="bds_weixin" data-cmd="weixin"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdPic":"","bdStyle":"0","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
       
       <div class="clearfix"></div>
     </footer>
@@ -88,13 +141,26 @@
 </article>
 
 
-  
 
-  <nav id="pagination">
-  
-  
-  <div class="clearfix"></div>
-</nav>
+<section id="comment">
+  <!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="2014/06/19/enum/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"messi20133"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+</section>
+
 </div></div>
     <aside id="sidebar" class="alignright">
 <div class="search">
