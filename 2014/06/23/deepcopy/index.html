@@ -1,0 +1,427 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>java的深复制和浅复制 | MESSI20133&#39;S BLOG</title>
+  <meta name="author" content="messi20133">
+  
+  <meta name="description" content="">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="java的深复制和浅复制"/>
+  <meta property="og:site_name" content="MESSI20133&#39;S BLOG"/>
+
+  <link rel="alternate" href="/atom.xml" title="MESSI20133&#39;S BLOG" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">MESSI20133&#39;S BLOG</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">首页</a></li>
+    
+      <li><a href="/archives">文档</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+    <div class="gallery">
+  <div class="photoset">
+    
+      <img src="">
+    
+  </div>
+  <div class="control">
+    <div class="prev"></div>
+    <div class="next"></div>
+  </div>
+</div>
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-06-23T04:48:13.000Z"><a href="/2014/06/23/deepcopy/">6月 23 2014</a></time>
+      
+      
+  
+    <h1 class="title">java的深复制和浅复制</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p><a id="more"></a><br>浅拷贝是指拷贝对象时仅仅拷贝对象本身（包括对象中的基本变量），而不拷贝对象包含的引用指向的对象。深拷贝不仅拷贝对象本身，而且拷贝对象包含的引用指向的所有对象。举例来说更加清楚：对象A1中包含对B1的引用，B1中包含对C1的引用。浅拷贝A1得到A2，A2 中依然包含对B1的引用，B1中依然包含对C1的引用。深拷贝则是对浅拷贝的递归，深拷贝A1得到A2，A2中包含对B2（B1的copy）的引用，B2 中包含对C2（C1的copy）的引用。</p>
+<p>若不对clone()方法进行改写，则调用此方法得到的对象即为浅拷贝，下面我们着重谈一下深拷贝。<br>运行下面的程序，看一看浅拷贝：</p>
+<pre><code><span class="class"><span class="keyword">class</span> <span class="title">Professor0</span> <span class="inheritance"><span class="keyword">implements</span></span> <span class="title">Cloneable</span> {</span>
+String name;
+<span class="keyword">int</span> age;
+
+Professor0(String name, <span class="keyword">int</span> age) {
+    <span class="keyword">this</span>.name = name;
+    <span class="keyword">this</span>.age = age;
+}
+
+<span class="keyword">public</span> Object clone() throws CloneNotSupportedException {
+    <span class="keyword">return</span> <span class="keyword">super</span>.clone();
+}
+}
+<span class="class"><span class="keyword">class</span> <span class="title">Student0</span> <span class="inheritance"><span class="keyword">implements</span></span> <span class="title">Cloneable</span> {</span>
+    String name;<span class="comment">// 常量对象。</span>
+    <span class="keyword">int</span> age;
+    Professor0 p;<span class="comment">// 学生1和学生2的引用值都是一样的。</span>
+
+    Student0(String name, <span class="keyword">int</span> age, Professor0 p) {
+        <span class="keyword">this</span>.name = name;
+        <span class="keyword">this</span>.age = age;
+        <span class="keyword">this</span>.p = p;
+}
+
+<span class="keyword">public</span> Object clone() {
+    Student0 o = <span class="keyword">null</span>;
+    <span class="keyword">try</span> {
+        o = (Student0) <span class="keyword">super</span>.clone();
+    } <span class="keyword">catch</span> (CloneNotSupportedException e) {
+        System.out.println(e.toString());
+    }
+
+    <span class="keyword">return</span> o;
+    }
+}
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ShallowCopy</span> {</span>
+    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(String[] args) {
+        Professor0 p = <span class="keyword">new</span> Professor0(<span class="string">"wangwu"</span>, <span class="number">50</span>);
+        Student0 s1 = <span class="keyword">new</span> Student0(<span class="string">"zhangsan"</span>, <span class="number">18</span>, p);
+        Student0 s2 = (Student0) s1.clone();
+        s2.p.name = <span class="string">"lisi"</span>;
+        s2.p.age = <span class="number">30</span>;
+        s2.name = <span class="string">"z"</span>;
+        s2.age = <span class="number">45</span>;
+        System.out.println(<span class="string">"学生s1的姓名："</span> + s1.name +     <span class="string">"\n学生s1教授的姓名："</span> + s1.p.name + <span class="string">","</span> + <span class="string">"\n学生s1教授的年纪"</span> + s1.p.age);<span class="comment">// 学生1的教授</span>
+}
+}
+</code></pre><p>s2变了，但s1也变了，证明s1的p和s2的p指向的是同一个对象。这在我们有的实际需求中，却不是这样，因而我们需要深拷贝：</p>
+<pre><code><span class="class"><span class="keyword">class</span> <span class="title">Professor</span> <span class="inheritance"><span class="keyword">implements</span></span> <span class="title">Cloneable</span> {</span>
+    String name;
+    <span class="keyword">int</span> age;
+
+    Professor(String name, <span class="keyword">int</span> age) {
+        <span class="keyword">this</span>.name = name;
+        <span class="keyword">this</span>.age = age;
+}
+
+<span class="keyword">public</span> Object clone() {
+    Object o = <span class="keyword">null</span>;
+    <span class="keyword">try</span> {
+        o = <span class="keyword">super</span>.clone();
+    } <span class="keyword">catch</span> (CloneNotSupportedException e) {
+        System.out.println(e.toString());
+    }
+    <span class="keyword">return</span> o;
+    }
+}
+
+<span class="class"><span class="keyword">class</span> <span class="title">Student</span> <span class="inheritance"><span class="keyword">implements</span></span> <span class="title">Cloneable</span> {</span>
+    String name;
+    <span class="keyword">int</span> age;
+    Professor p;
+    Student(String name, <span class="keyword">int</span> age, Professor p) {
+        <span class="keyword">this</span>.name = name;
+        <span class="keyword">this</span>.age = age;
+        <span class="keyword">this</span>.p = p;
+}
+
+<span class="keyword">public</span> Object clone() {
+    Student o = <span class="keyword">null</span>;
+    <span class="keyword">try</span> {
+        o = (Student) <span class="keyword">super</span>.clone();
+    } <span class="keyword">catch</span> (CloneNotSupportedException e) {
+        System.out.println(e.toString());
+    }
+    o.p = (Professor) p.clone();
+    <span class="keyword">return</span> o;
+    }
+}
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeepCopy</span> {</span>
+ <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(String args[]) {
+    <span class="keyword">long</span> t1 = System.currentTimeMillis();
+    Professor p = <span class="keyword">new</span> Professor(<span class="string">"wangwu"</span>, <span class="number">50</span>);
+    Student s1 = <span class="keyword">new</span> Student(<span class="string">"zhangsan"</span>, <span class="number">18</span>, p);
+    Student s2 = (Student) s1.clone();
+    s2.p.name = <span class="string">"lisi"</span>;
+    s2.p.age = <span class="number">30</span>;
+    System.out.println(<span class="string">"name="</span> + s1.p.name + <span class="string">","</span> + <span class="string">"age="</span> + s1.p.age);<span class="comment">// 学生1的教授不改变。</span>
+    <span class="keyword">long</span> t2 = System.currentTimeMillis();
+    System.out.println(t2-t1);
+}
+}
+</code></pre><p>当然我们还有一种深拷贝方法，就是将对象串行化：</p>
+<pre><code>import java.io.*;
+<span class="class"><span class="keyword">class</span> <span class="title">Professor2</span> <span class="inheritance"><span class="keyword">implements</span></span> <span class="title">Serializable</span> {</span>
+<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1</span>L;
+String name;
+<span class="keyword">int</span> age;
+
+Professor2(String name, <span class="keyword">int</span> age) {
+    <span class="keyword">this</span>.name = name;
+    <span class="keyword">this</span>.age = age;
+}
+}
+
+<span class="class"><span class="keyword">class</span> <span class="title">Student2</span> <span class="inheritance"><span class="keyword">implements</span></span> <span class="title">Serializable</span> {</span>
+    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1</span>L;
+    String name;<span class="comment">// 常量对象。</span>
+    <span class="keyword">int</span> age;
+    Professor2 p;<span class="comment">// 学生1和学生2的引用值都是一样的。</span>
+
+    Student2(String name, <span class="keyword">int</span> age, Professor2 p) {
+        <span class="keyword">this</span>.name = name;
+        <span class="keyword">this</span>.age = age;
+        <span class="keyword">this</span>.p = p;
+}
+
+<span class="keyword">public</span> Object deepClone() throws IOException, OptionalDataException,
+        ClassNotFoundException {
+    <span class="comment">// 将对象写到流里</span>
+    ByteArrayOutputStream bo = <span class="keyword">new</span> ByteArrayOutputStream();
+    ObjectOutputStream oo = <span class="keyword">new</span> ObjectOutputStream(bo);
+    oo.writeObject(<span class="keyword">this</span>);
+    <span class="comment">// 从流里读出来</span>
+    ByteArrayInputStream bi = <span class="keyword">new</span> ByteArrayInputStream(bo.toByteArray());
+    ObjectInputStream oi = <span class="keyword">new</span> ObjectInputStream(bi);
+    <span class="keyword">return</span> (oi.readObject());
+}
+}
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeepCopy2</span> {</span>
+<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(String[] args) throws OptionalDataException,
+        IOException, ClassNotFoundException {
+    <span class="keyword">long</span> t1 = System.currentTimeMillis();
+    Professor2 p = <span class="keyword">new</span> Professor2(<span class="string">"wangwu"</span>, <span class="number">50</span>);
+    Student2 s1 = <span class="keyword">new</span> Student2(<span class="string">"zhangsan"</span>, <span class="number">18</span>, p);
+    Student2 s2 = (Student2) s1.deepClone();
+    s2.p.name = <span class="string">"lisi"</span>;
+    s2.p.age = <span class="number">30</span>;
+    System.out.println(<span class="string">"name="</span> + s1.p.name + <span class="string">","</span> + <span class="string">"age="</span> + s1.p.age); <span class="comment">// 学生1的教授不改变。</span>
+    <span class="keyword">long</span> t2 = System.currentTimeMillis();
+    System.out.println(t2-t1);
+}
+}
+</code></pre><p>但是串行化却很耗时，在一些框架中，我们便可以感受到，它们往往将对象进行串行化后进行传递，耗时较多。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/categories/java学习/">java学习</a>
+  </div>
+
+        
+  
+  <div class="tags">
+    <a href="/tags/java学习/">java学习</a>
+  </div>
+
+        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone"></a><a href="#" class="bds_tsina" data-cmd="tsina"></a><a href="#" class="bds_tqq" data-cmd="tqq"></a><a href="#" class="bds_renren" data-cmd="renren"></a><a href="#" class="bds_weixin" data-cmd="weixin"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdPic":"","bdStyle":"0","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["qzone","tsina","tqq","renren","weixin"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+<section id="comment">
+  <!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="2014/06/23/deepcopy/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"messi20133"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+<div class="search">
+  <form action="http://google.com/search" method="get" accept-charset="utf-8">
+    <input type="text" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+
+
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/C/C++/">C/C++</a><small>1</small></li>
+  
+    <li><a href="/categories/多线程/">多线程</a><small>1</small></li>
+  
+    <li><a href="/categories/算法/">算法</a><small>16</small></li>
+  
+    <li><a href="/categories/算法/二分查找/">二分查找</a><small>1</small></li>
+  
+    <li><a href="/categories/一致性哈希/">一致性哈希</a><small>1</small></li>
+  
+    <li><a href="/categories/java学习/">java学习</a><small>9</small></li>
+  
+    <li><a href="/categories/算法/编辑距离/">编辑距离</a><small>1</small></li>
+  
+    <li><a href="/categories/算法/最短距离/">最短距离</a><small>1</small></li>
+  
+    <li><a href="/categories/算法/回文/">回文</a><small>1</small></li>
+  
+    <li><a href="/categories/java学习/算法/">算法</a><small>3</small></li>
+  
+    <li><a href="/categories/算法/树/">树</a><small>1</small></li>
+  
+    <li><a href="/categories/算法/链表/">链表</a><small>1</small></li>
+  
+    <li><a href="/categories/算法/排序/">排序</a><small>3</small></li>
+  
+    <li><a href="/categories/算法/动态规划/">动态规划</a><small>1</small></li>
+  
+    <li><a href="/categories/排序/">排序</a><small>1</small></li>
+  
+    <li><a href="/categories/二叉树/">二叉树</a><small>4</small></li>
+  
+    <li><a href="/categories/算法/全排列/">全排列</a><small>1</small></li>
+  
+    <li><a href="/categories/随机概率/">随机概率</a><small>1</small></li>
+  
+    <li><a href="/categories/视频/">视频</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+
+
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/c/c++/">c/c++</a><small>1</small></li>
+  
+    <li><a href="/tags/const/">const</a><small>1</small></li>
+  
+    <li><a href="/tags/多线程/">多线程</a><small>1</small></li>
+  
+    <li><a href="/tags/二分查找/">二分查找</a><small>2</small></li>
+  
+    <li><a href="/tags/哈希/">哈希</a><small>1</small></li>
+  
+    <li><a href="/tags/负载均衡/">负载均衡</a><small>1</small></li>
+  
+    <li><a href="/tags/数组/">数组</a><small>3</small></li>
+  
+    <li><a href="/tags/java学习/">java学习</a><small>2</small></li>
+  
+    <li><a href="/tags/编辑距离/">编辑距离</a><small>1</small></li>
+  
+    <li><a href="/tags/最短距离/">最短距离</a><small>1</small></li>
+  
+    <li><a href="/tags/java/">java</a><small>6</small></li>
+  
+    <li><a href="/tags/回文/">回文</a><small>1</small></li>
+  
+    <li><a href="/tags/算法/">算法</a><small>1</small></li>
+  
+    <li><a href="/tags/动态代理/">动态代理</a><small>2</small></li>
+  
+    <li><a href="/tags/二叉树/">二叉树</a><small>5</small></li>
+  
+    <li><a href="/tags/链表/">链表</a><small>1</small></li>
+  
+    <li><a href="/tags/排序/">排序</a><small>3</small></li>
+  
+    <li><a href="/tags/动态规划/">动态规划</a><small>2</small></li>
+  
+    <li><a href="/tags/归并排序/">归并排序</a><small>1</small></li>
+  
+    <li><a href="/tags/逆序对/">逆序对</a><small>1</small></li>
+  
+    <li><a href="/tags/逆波兰表达式/">逆波兰表达式</a><small>1</small></li>
+  
+    <li><a href="/tags/全排列/">全排列</a><small>1</small></li>
+  
+    <li><a href="/tags/随机数/">随机数</a><small>1</small></li>
+  
+    <li><a href="/tags/概率/">概率</a><small>1</small></li>
+  
+    <li><a href="/tags/线程/">线程</a><small>1</small></li>
+  
+    <li><a href="/tags/K值/">K值</a><small>1</small></li>
+  
+    <li><a href="/tags/足球/">足球</a><small>1</small></li>
+  
+    <li><a href="/tags/视频/">视频</a><small>1</small></li>
+  
+    <li><a href="/tags/求和/">求和</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+
+
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/K值/" style="font-size: 10.00px;">K值</a><a href="/tags/c/c++/" style="font-size: 10.00px;">c/c++</a><a href="/tags/const/" style="font-size: 10.00px;">const</a><a href="/tags/java/" style="font-size: 20.00px;">java</a><a href="/tags/java学习/" style="font-size: 12.50px;">java学习</a><a href="/tags/二分查找/" style="font-size: 12.50px;">二分查找</a><a href="/tags/二叉树/" style="font-size: 17.50px;">二叉树</a><a href="/tags/全排列/" style="font-size: 10.00px;">全排列</a><a href="/tags/动态代理/" style="font-size: 12.50px;">动态代理</a><a href="/tags/动态规划/" style="font-size: 12.50px;">动态规划</a><a href="/tags/哈希/" style="font-size: 10.00px;">哈希</a><a href="/tags/回文/" style="font-size: 10.00px;">回文</a><a href="/tags/多线程/" style="font-size: 10.00px;">多线程</a><a href="/tags/归并排序/" style="font-size: 10.00px;">归并排序</a><a href="/tags/排序/" style="font-size: 15.00px;">排序</a><a href="/tags/数组/" style="font-size: 15.00px;">数组</a><a href="/tags/最短距离/" style="font-size: 10.00px;">最短距离</a><a href="/tags/概率/" style="font-size: 10.00px;">概率</a><a href="/tags/求和/" style="font-size: 10.00px;">求和</a><a href="/tags/算法/" style="font-size: 10.00px;">算法</a><a href="/tags/线程/" style="font-size: 10.00px;">线程</a><a href="/tags/编辑距离/" style="font-size: 10.00px;">编辑距离</a><a href="/tags/视频/" style="font-size: 10.00px;">视频</a><a href="/tags/负载均衡/" style="font-size: 10.00px;">负载均衡</a><a href="/tags/足球/" style="font-size: 10.00px;">足球</a><a href="/tags/逆序对/" style="font-size: 10.00px;">逆序对</a><a href="/tags/逆波兰表达式/" style="font-size: 10.00px;">逆波兰表达式</a><a href="/tags/链表/" style="font-size: 10.00px;">链表</a><a href="/tags/随机数/" style="font-size: 10.00px;">随机数</a>
+  </div>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2014 messi20133
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>
