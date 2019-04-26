@@ -97,7 +97,10 @@
   function bindEvent() {
     var params = baseParams;
     tools.getUrlParams();
-    var  translate_target = params.k.substr(0,s.indexOf(','))
+    var  translate_target;
+    if (params.k) {
+      translate_target = params.k.substr(0, params.k.indexOf(','));
+    }
     window.addEventListener('unload', function(e) {
       if (translate_target == 15) {
         if (typeof navigator.sendBeacon == 'function') {
