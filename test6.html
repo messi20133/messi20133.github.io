@@ -103,20 +103,12 @@
     }
     window.addEventListener('unload', function(e) {
       if (translate_target == 15) {
-        if (typeof navigator.sendBeacon == 'function') {
-          navigator.sendBeacon(tools.getKafkaUrl(params));
-        } else {
-          tools.imgLog(params);
-        }
+        tools.imgLog(params);
       }
     });
     window.addEventListener('load', function () {
       if (translate_target == 16) {
-        if (typeof navigator.sendBeacon == 'function') {
-          navigator.sendBeacon(tools.getKafkaUrl(params));
-        } else {
-          tools.imgLog(params);
-        }
+        tools.imgLog(params);
       }
     })
   }
