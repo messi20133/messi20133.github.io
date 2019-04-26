@@ -8,6 +8,125 @@
 </head>
 <body>
   <button onclick="LXLOG.sendLog(11)">test button</button>
-  <script src="https://jcslx.yidianzixun.com/static/CmcRYlzCsHiEJkoNAAAAAAAAAAA6307/xx1x_v.js"></script><script>;LXLOG.addParams({"k":"16,86,test23,4,1000000578","l":"http://lx2.yidianzixun.com:3203","t":"test5"})</script>
+  
+  <script>
+    var LXLOG = (function () {
+  var logApi = 'http://ads.yidianzixun.com/log';
+  var topic = 'lingxi_advertorial_h5_kingslanding'
+  // var topic = 'test5'
+  var randomList = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
+  var baseParams = {};
+  var tools = {
+    //合并参数
+    addParams: function (params) {
+      logApi = params.l + '/log';
+      topic = params.t;
+      delete params.l;
+      delete params.t;
+      Object.assign(baseParams, params);
+      bindEvent();
+    },
+    //获取url参数
+    getUrlParams: function () {
+      var params = location.search.slice(1).split('&')
+        .reduce(function (pre, cur) {
+          if(cur === '') return pre
+          var item = cur.split('=')
+          pre[item[0].replace(/\B([A-Z])/, '_$1').toLowerCase()] = decodeURIComponent(item[1])
+          return pre;
+        }, {})
+
+      if (params.aid) {
+        params.idea_id = params.aid;
+      }
+      Object.assign(baseParams, params);
+    },
+    //发送日志
+    sendLog: function (type) {
+      // this.getUrlParams();
+      if ([15, 16].indexOf(type) == -1) {
+        this.imgLog(baseParams);
+      }
+    },
+    //使用图片发送日志
+    imgLog: function (params) {
+      var img = new Image();
+      var rnd_id = "_img_" + Math.random();
+      window[rnd_id] = img; // 全局变量引用
+      img.onload = img.onerror = function () {
+        window[rnd_id] = null; // 删除全局变量引用
+      }
+      img.src = this.getKafkaUrl(params);
+    },
+    //创建uuid
+    uuid: function (trackId) {
+      trackId = (trackId + '').replace(/\,/g, '');
+      var pre = new Date().getTime();
+      var result = pre + '_' + trackId + '_';
+      var leftLen = 32 - result.length;
+      if (leftLen < 0) {
+        return result;
+      }
+      var randomListLen = randomList.length;
+      var suffix = '';
+      while (leftLen--) {
+        suffix += randomList[Math.floor(Math.random() * randomListLen)];
+      }
+      return result + suffix;
+    },
+    getKafkaUrl: function (baseParams) {
+      var msgData = {
+        entry: {
+          site: {}
+        },
+        event: ['click'],
+        type: 'h5',
+        timestamp: new Date().getTime(),
+      };
+      baseParams.uuid = this.uuid(baseParams.k);
+      // if (baseParams.is_activation) {
+      //   baseParams.landing_url = 'http://element-cn.eleme.io/#/zh-CN/component/installation';
+      // } else {
+      //   baseParams.landing_url = location.href;
+      // }
+      // baseParams.landing_url = location.href;
+      msgData.info = baseParams;
+      return logApi + '?topic=' + topic + '&data=' + encodeURIComponent(JSON.stringify(msgData));
+    }
+  }
+  function bindEvent() {
+    var params = baseParams;
+    tools.getUrlParams();
+    let translate_target = params.k.substr(0,s.indexOf(','))
+    window.addEventListener('unload', function(e) {
+      if (params.translate_target == 15) {
+        if (typeof navigator.sendBeacon == 'function') {
+          navigator.sendBeacon(tools.getKafkaUrl(params));
+        } else {
+          tools.imgLog(params);
+        }
+      }
+    });
+    window.addEventListener('load', function () {
+      if (params.translate_target == 16) {
+        if (typeof navigator.sendBeacon == 'function') {
+          navigator.sendBeacon(tools.getKafkaUrl(params));
+        } else {
+          tools.imgLog(params);
+        }
+      }
+    })
+  }
+  if (window.LXLOG) {
+    return LXLOG;
+  } else {
+    return {
+      addParams: tools.addParams.bind(tools),
+      sendLog: tools.sendLog.bind(tools)
+    } 
+  }
+})()
+  </script>
+  <script>;LXLOG.addParams({"k":"16,86,test23,4,1000000578","l":"http://lx2.yidianzixun.com:3203","t":"test5"})</script>
 </body>
 </html>
